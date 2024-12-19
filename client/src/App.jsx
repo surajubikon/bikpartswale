@@ -16,6 +16,8 @@ import { FaCartShopping } from "react-icons/fa6";
 import CartMobileLink from './components/CartMobile';
 import SmoothScroll from './utils/SmoothScroll';
 
+import './assets/css/style.css';
+
 function App() {
   const dispatch = useDispatch()
   const location = useLocation()

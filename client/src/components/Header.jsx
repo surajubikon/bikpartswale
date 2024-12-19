@@ -3,6 +3,9 @@ import logo from '../assets/logobiike.png'
 import Search from './Search'
 import { Link, useLocation,useNavigate } from 'react-router-dom'
 import { FaRegCircleUser } from "react-icons/fa6";
+import { FaRegUser } from "react-icons/fa";
+import { IoCartOutline } from "react-icons/io5";
+
 import useMobile from '../hooks/useMobile';
 import { BsCart4 } from "react-icons/bs";
 import { useSelector } from 'react-redux';
@@ -60,7 +63,7 @@ const Header = () => {
     <header className='h-24 lg:h-20 lg:shadow-md sticky top-0 z-40 flex flex-col justify-center gap-1 bg-white'>
         {
             !(isSearchPage && isMobile) && (
-                <div className='container mx-auto flex items-center px-2 justify-between'>
+                <div className='container mx-auto flex items-center justify-between px-4'>
                                 {/**logo */}
                                 <div className='h-full'>
                                     <Link to={"/"} className='h-full flex justify-center items-center'>
@@ -122,15 +125,20 @@ const Header = () => {
                                                     
                                                 </div>
                                             ) : (
-                                                <button onClick={redirectToLoginPage} className='text-lg px-2'>Login</button>
+                                                <div className='flex items-center justify-center flex-col'>
+                                                    
+                                                    <FaRegUser className='' size={18} />
+
+                                                    <button onClick={redirectToLoginPage} className='mt-2 text-sm px-2'>Login/Signup</button>
+                                                </div>
                                             )
                                         }
-                                        <button onClick={()=>setOpenCartSection(true)} className='flex items-center gap-2 bg-green-800 hover:bg-green-700 px-3 py-2 rounded text-white'>
+                                        <button onClick={()=>setOpenCartSection(true)} className='flex items-center justify-center flex-col'>
                                             {/**add to card icons */}
-                                            <div className='animate-bounce'>
-                                                <BsCart4 size={26}/>
+                                            <div className=''>
+                                                <IoCartOutline className='14' size={20} />
                                             </div>
-                                            <div className='font-semibold text-sm'>
+                                            <div className='text-sm mt-2'>
                                                 {
                                                     cartItem[0] ? (
                                                         <div>
