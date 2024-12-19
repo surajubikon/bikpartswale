@@ -12,31 +12,9 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
         name: "",
         image: "",
         category: [],
-        brand: "",  // Add brand field
     });
 
-    const [brands, setBrands] = useState([]); // State to hold brands data
     const allCategory = useSelector(state => state.product.allCategory);
-
-    // Fetch brands data when component mounts
-    useEffect(() => {
-        const fetchBrands = async () => {
-            try {
-                const response = await Axios({
-                    ...SummaryApi.getBrands, // API endpoint for fetching brands
-                });
-                const { data: responseData } = response;
-
-                if (responseData.success) {
-                    setBrands(responseData.data);
-                }
-            } catch (error) {
-                AxiosToastError(error);
-            }
-        };
-
-        fetchBrands();
-    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -79,21 +57,21 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
 
     const handleSubmitSubCategory = async(e) => {
         e.preventDefault();
-    
-        // Check if either category or brand is selected
-        if (!subCategoryData.category.length && !subCategoryData.brand) {
-            toast.error("Please select either a category or a brand.");
-            return; // Don't submit if neither is selected
+
+        // Check if category is selected
+        if (!subCategoryData.category.length) {
+            toast.error("Please select a category.");
+            return;
         }
-    
+
         try {
             const response = await Axios({
                 ...SummaryApi.createSubCategory,
                 data: subCategoryData
             });
-    
+
             const { data: responseData } = response;
-    
+
             if (responseData.success) {
                 toast.success(responseData.message);
                 if (close) {
@@ -103,12 +81,11 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
                     fetchData();
                 }
             }
-    
+
         } catch (error) {
             AxiosToastError(error);
         }
     };
-    
 
     return (
         <section className='fixed top-0 right-0 bottom-0 left-0 bg-neutral-800 bg-opacity-70 z-50 flex items-center justify-center p-4'>
@@ -204,36 +181,9 @@ const UploadSubCategoryModel = ({ close, fetchData }) => {
                         </div>
                     </div>
 
-                    {/* Add Brand Dropdown */}
-                    <div className='grid gap-1'>
-                        <label>Select Brand</label>
-                        <div className='border focus-within:border-primary-200 rounded'>
-                            <select
-                                className='w-full p-2 bg-transparent outline-none border'
-                                onChange={(e) => {
-                                    setSubCategoryData((prev) => {
-                                        return {
-                                            ...prev,
-                                            brand: e.target.value,  // Set selected brand
-                                        };
-                                    });
-                                }}
-                            >
-                                <option value={""}>Select Brand</option>
-                                {
-                                    brands.map((brand, index) => {
-                                        return (
-                                            <option value={brand._id} key={brand._id + "brand"}>{brand.name}</option>
-                                        );
-                                    })
-                                }
-                            </select>
-                        </div>
-                    </div>
-
                     <button
                         className={`px-4 py-2 border
-                            ${subCategoryData?.name && subCategoryData?.image && subCategoryData?.category[0] && subCategoryData?.brand ? "bg-primary-200 hover:bg-primary-100" : "bg-gray-200"}    
+                            ${subCategoryData?.name && subCategoryData?.image && subCategoryData?.category[0] ? "bg-primary-200 hover:bg-primary-100" : "bg-gray-200"}    
                             font-semibold
                         `}
                     >

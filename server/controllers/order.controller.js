@@ -6,7 +6,7 @@ import PaymentModel from "../models/payment.model.js";
 import CartProductModel from "../models/cartproduct.model.js";
 import OrderModel from "../models/order.model.js";
 import UserModel from "../models/user.model.js";
-
+import ProductModel from "../models/product.model.js";
 // Define Joi Schema
 const codOrderSchema = Joi.object({
     list_items: Joi.array().items(
@@ -38,11 +38,23 @@ export async function CashOnDeliveryOrderController(request, response) {
                 name: el.productId.name,
                 image: el.productId.image,
             },
-            paymentId: null,
+            paymentId: "",
             payment_status: "PENDING",
             delivery_address: addressId,
             totalAmt,
         }));
+         // Increment salesCount for each product
+        //  await Promise.all(
+        //     list_items.map(async (el) => {
+        //         await ProductModel.findByIdAndUpdate(el.productId._id, {
+        //             $inc: { salesCount: 1 },
+        //         });
+        //     })
+        // );
+        await ProductModel.updateOne(
+            { _id: el.productId._id }, 
+            { $inc: { sales: 1 } }  // Increment sales by 1
+        );
 
         const generatedOrder = await OrderModel.insertMany(payload);
 
@@ -125,6 +137,20 @@ export async function verifyRazorpayPaymentController(request, response) {
             delivery_address: addressId,
             totalAmt,
         }));
+
+
+        // Increment salesCount for each product
+        // await Promise.all(
+        //     list_items.map(async (el) => {
+        //         await ProductModel.findByIdAndUpdate(el.productId._id, {
+        //             $inc: { salesCount: 1 },
+        //         }, { session });
+        //     })
+        // );
+        await ProductModel.updateOne(
+            { _id: el.productId._id }, 
+            { $inc: { sales: 1 } }  // Increment sales by 1
+        );
 
         const generatedOrder = await OrderModel.insertMany(payload, { session });
 

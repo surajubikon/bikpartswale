@@ -45,7 +45,11 @@ const orderSchema = new mongoose.Schema({
     invoice_receipt : {
         type : String,
         default : ""
-    }
+    },
+    sales: {
+        type: Number,
+        default: 0 // Jab naya product banega to sales default 0 hogi
+    },
 },{
     timestamps : true
 })

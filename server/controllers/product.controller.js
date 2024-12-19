@@ -309,3 +309,25 @@ export const searchProduct = async(request,response)=>{
         })
     }
 }
+export const getTopSellingProducts = async (request, response) => {
+    try {
+        const { limit } = request.query; // User kitne top products dekhna chahta hai
+        const topProducts = await ProductModel.find()
+            .sort({ sales: -1 }) // Descending order me sort
+            .limit(parseInt(limit) || 6 ); // Default limit 10 rakho
+
+        return response.json({
+            message: "Top-selling products list",
+            data: topProducts,
+            error: false,
+            success: true,
+           
+        });
+    } catch (error) {
+        return response.status(500).json({
+            message: error.message || "Server error",
+            error: true,
+            success: false,
+        });
+    }
+};

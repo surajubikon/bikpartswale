@@ -14,9 +14,7 @@ import productRouter from './route/product.route.js'
 import cartRouter from './route/cart.route.js'
 import addressRouter from './route/address.route.js'
 import orderRouter from './route/order.route.js'
-
-// import adminOrderRouter from './route/orderbyadmin.js'
-//
+import subBrandRouter from './route/subbrand.router.js'; 
 import brandsmodelsRouter from  './route/brandsmodel.router.js'
 
 const app = express()
@@ -44,7 +42,7 @@ app.use('/api/user',userRouter)
 app.use("/api/category",categoryRouter)
 app.use("/api/brand-models",brandsmodelsRouter)
 // app.use("/api/admin/orders", adminOrderRouter);
-
+app.use('/api/sub-brands', subBrandRouter);
 app.use("/api/file",uploadRouter)
 app.use("/api/subcategory",subCategoryRouter)
 app.use("/api/product",productRouter)

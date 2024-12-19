@@ -70,6 +70,11 @@ const UserMenu = ({close}) => {
                 <Link onClick={handleClose} to={"/dashboard/subcategory"} className='px-2 hover:bg-orange-200 py-1'>Sub Category</Link>
               )
             }
+            {
+              isAdmin(user.role) && (
+                <Link onClick={handleClose} to={"/dashboard/subbrand"} className='px-2 hover:bg-orange-200 py-1'>Sub brand</Link>
+              )
+            }
 
             {
               isAdmin(user.role) && (

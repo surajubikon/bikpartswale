@@ -47,7 +47,11 @@ const productSchema = new mongoose.Schema({
     publish : {
         type : Boolean,
         default : true
-    }
+    },
+    sales: {
+        type: Number,
+        default: 0 // Jab naya product banega to sales default 0 hogi
+    },
 },{
     timestamps : true
 })

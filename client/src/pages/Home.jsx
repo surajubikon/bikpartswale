@@ -21,7 +21,7 @@ const Home = () => {
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [topSellingProducts, setTopSellingProducts] = useState([]);
   useEffect(() => {
     const fetchBrands = async () => {
       try {
@@ -36,9 +36,25 @@ const Home = () => {
         setLoading(false);
       }
     };
-    fetchBrands();
-  }, []);
+    const fetchTopSellingProducts = async () => {
+      try {
+        const response = await axios.get(
+         "http://localhost:8080/api/product/top-selling-products"
 
+        );
+        setTopSellingProducts(response.data?.data || []);
+      } catch (err) {
+        console.log(response.data)
+        console.error("Error fetching top-selling products:", err);
+        setError("Failed to load top-selling products");
+      }
+    };
+
+    fetchBrands();
+    fetchTopSellingProducts();
+  }, []);
+  
+  
   const handleRedirectProductListpage = (id, cat) => {
     // Find the related subcategory
     const subcategory = subCategoryData.find((sub) =>
@@ -82,6 +98,9 @@ const Home = () => {
         </div>
       </div>
 
+
+
+
       {/* Brands Section */}
       <div className="container mx-auto px-6 my-4">
   <h2 className="text-2xl font-bold mb-4">Brands</h2>
@@ -118,6 +137,39 @@ const Home = () => {
     </Swiper>
   )}
 </div>
+<div className="container mx-auto px-6 my-4">
+  <h2 className="text-2xl font-bold mb-4">Top Selling Products</h2>
+  {loading ? (
+    <p>Loading top-selling products...</p>
+  ) : error ? (
+    <p className="text-red-600">{error}</p>
+  ) : (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      {topSellingProducts.map((product) => (
+        <div key={product._id} className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col justify-between h-full">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="w-full h-32 object-cover rounded-md mb-4"
+          />
+          <div className="flex-grow">
+            <h3 className="text-sm font-semibold text-gray-800">{product.name}</h3>
+          </div>
+          <div>
+            <p className="text-lg font-bold text-green-600">{product.price}₹</p>
+            <Link
+              to={`/product/${product._id}`}
+              className="inline-block bg-red-600 text-white py-2 px-4 rounded-lg mt-2 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+            >
+              View Details
+            </Link>
+          </div>
+        </div>
+      ))}
+    </div>
+  )}
+</div>
+
 
  {/** update catgrpry */}
  <div className="container mx-auto px-4 my-2">

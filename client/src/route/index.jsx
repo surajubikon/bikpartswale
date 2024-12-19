@@ -14,6 +14,7 @@ import MyOrders from "../pages/MyOrders";
 import Address from "../pages/Address";
 import CategoryPage from "../pages/CategoryPage";
 import BrandsPage from "../components/BrandsPage";
+import SubBrandsPage from "../pages/SubBrandsPage";
 import SubCategoryPage from "../pages/SubCategoryPage";
 import UploadProduct from "../pages/UploadProduct";
 import ProductAdmin from "../pages/ProductAdmin";
@@ -89,6 +90,10 @@ const router = createBrowserRouter([
                     {
                         path : 'Brands',
                         element : <AdminPermision><BrandsPage/></AdminPermision>
+                    },
+                    {
+                        path : 'subbrand',
+                        element : <AdminPermision><SubBrandsPage/></AdminPermision>
                     },
                     {
                         path : "subcategory",

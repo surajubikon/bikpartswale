@@ -16,7 +16,6 @@ import toast from 'react-hot-toast'
 const SubCategoryPage = () => {
   const [openAddSubCategory, setOpenAddSubCategory] = useState(false)
   const [data, setData] = useState([])
-  const [brands, setBrands] = useState([])  // State for brands
   const [loading, setLoading] = useState(false)
   const columnHelper = createColumnHelper()
   const [ImageURL, setImageURL] = useState("")
@@ -47,24 +46,9 @@ const SubCategoryPage = () => {
     }
   }
 
-  const fetchBrands = async () => {
-    try {
-      const response = await Axios({
-        ...SummaryApi.getBrands  // Fetch brands data
-      })
-      const { data: responseData } = response
-
-      if (responseData.success) {
-        setBrands(responseData.data)  // Set brands data
-      }
-    } catch (error) {
-      AxiosToastError(error)
-    }
-  }
-
   useEffect(() => {
     fetchSubCategory()
-    fetchBrands()  // Fetch brands when component mounts
+  
   }, [])
 
   const column = [
@@ -102,15 +86,7 @@ const SubCategoryPage = () => {
         )
       }
     }),
-    columnHelper.accessor("brand", {  // Add brand column
-      header: "Brand",
-      cell: ({ row }) => {
-        const brand = brands.find(brand => brand._id === row.original.brand);
-        return (
-          <span>{brand ? brand.name : "No Brand"}</span>  
-        );
-      }
-    }),
+  
     columnHelper.accessor("_id", {
       header: "Action",
       cell: ({ row }) => {
