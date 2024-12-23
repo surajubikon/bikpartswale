@@ -69,3 +69,60 @@
     text-align: center;
 
 }
+
+
+
+.popular-brands {   
+    margin-top: 65px;
+}
+.popular-brands .home-heading {
+    margin-bottom: 47px;
+}
+.popular-brands .bike-parts-iteam {
+    color: #E63946;
+}
+
+/*******/
+
+.popular-brands {
+    width: 100%;
+}
+
+
+
+/* .popular-brands-header {
+    background-color: #f4f4f4;
+    font-weight: bold;
+} */
+
+.popular-brands-cell {
+    border: 1px solid #ddd;
+}
+
+/* .popular-brands-row:nth-child(even):not(.popular-brands-header) {
+    background-color: #f9f9f9;
+} */
+
+/* .popular-brands-row:hover {
+    background-color: #f1f1f1;
+} */
+
+/*****/
+footer {
+    background-image: url(../footer.png);
+    background-size: 100%;
+}
+footer h3 {
+    font-size: 19px !important;
+    font-weight: 500 !important;
+    text-transform: uppercase;
+}
+footer .socile a {
+    background: #fff;
+    padding: 6px 6px;
+    color: #ff594f;
+    border-radius: 40px;
+}
+footer .space-y-2 li a {
+    font-size: 14px;
+}

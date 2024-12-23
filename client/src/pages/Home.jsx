@@ -1,13 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { Navigation, Pagination, Autoplay } from 'swiper/modules';
+import 'swiper/css';
+import 'swiper/css/navigation';
+import 'swiper/css/pagination';
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import banner from "../assets/b.jpg";
 import bannerMobile from "../assets/bannermob.jpg";
+import pb1 from "../assets/pb1.png";
+import pb2 from "../assets/pb2.png";
+import pb3 from "../assets/pb3.png";
+import pb4 from "../assets/pb4.png";
+import pb5 from "../assets/pb5.png";
+import pb6 from "../assets/pb6.png";
+
 import CategoryWiseProductDisplay from "../components/CategoryWiseProductDisplay";
 import { valideURLConvert } from "../utils/valideURLConvert";
-import { Navigation, Pagination } from 'swiper/modules';
+// import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';  // If using Navigation module
 import 'swiper/css/pagination';  // If using Pagination module
@@ -251,63 +262,63 @@ const Home = () => {
             <h2>Bike Body Parts</h2>
             <p>Five star rated latest best selling products</p>
           </div>
-        <div class="">
-          <div class="grid grid-cols-6 gap-4">
-                <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-                  <div class="">
-                    <div class="p-3 bg-white rounded-full shadow-lg">
-                    <img src={bannerMobile} className="rounded-full" />      
-                      {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+          <div class="">
+            <div class="grid grid-cols-6 gap-4">
+                  <div class="bike-parts-iteam p-3 flex flex-col justify-between">
+                    <div class="">
+                      <div class="p-3 bg-white rounded-full shadow-lg">
+                      <img src={bannerMobile} className="rounded-full" />      
+                        {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                      </div>
+                      <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
                     </div>
-                    <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
                   </div>
-                </div>
-                <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-                  <div class="">
-                    <div class="p-3 bg-white rounded-full shadow-lg">
-                    <img src={bannerMobile} className="rounded-full" />      
-                      {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                  <div class="bike-parts-iteam p-3 flex flex-col justify-between">
+                    <div class="">
+                      <div class="p-3 bg-white rounded-full shadow-lg">
+                      <img src={bannerMobile} className="rounded-full" />      
+                        {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                      </div>
+                      <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
                     </div>
-                    <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
                   </div>
-                </div>
-                <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-                  <div class="">
-                    <div class="p-3 bg-white rounded-full shadow-lg">
-                    <img src={bannerMobile} className="rounded-full" />      
-                      {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                  <div class="bike-parts-iteam p-3 flex flex-col justify-between">
+                    <div class="">
+                      <div class="p-3 bg-white rounded-full shadow-lg">
+                      <img src={bannerMobile} className="rounded-full" />      
+                        {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                      </div>
+                      <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
                     </div>
-                    <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
                   </div>
-                </div>
-                <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-                  <div class="">
-                    <div class="p-3 bg-white rounded-full shadow-lg">
-                    <img src={bannerMobile} className="rounded-full" />      
-                      {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                  <div class="bike-parts-iteam p-3 flex flex-col justify-between">
+                    <div class="">
+                      <div class="p-3 bg-white rounded-full shadow-lg">
+                      <img src={bannerMobile} className="rounded-full" />      
+                        {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                      </div>
+                      <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
                     </div>
-                    <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
                   </div>
-                </div>
-                <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-                  <div class="">
-                    <div class="p-3 bg-white rounded-full shadow-lg">
-                    <img src={bannerMobile} className="rounded-full" />      
-                      {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                  <div class="bike-parts-iteam p-3 flex flex-col justify-between">
+                    <div class="">
+                      <div class="p-3 bg-white rounded-full shadow-lg">
+                      <img src={bannerMobile} className="rounded-full" />      
+                        {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                      </div>
+                      <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
                     </div>
-                    <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
                   </div>
-                </div>
-                <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-                  <div class="">
-                    <div class="p-3 bg-white rounded-full shadow-lg">
-                    <img src={bannerMobile} className="rounded-full" />      
-                      {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                  <div class="bike-parts-iteam p-3 flex flex-col justify-between">
+                    <div class="">
+                      <div class="p-3 bg-white rounded-full shadow-lg">
+                      <img src={bannerMobile} className="rounded-full" />      
+                        {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                      </div>
+                      <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
                     </div>
-                    <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
                   </div>
-                </div>
-            </div> 
+              </div> 
           </div>
       </div>   
       
@@ -340,6 +351,80 @@ const Home = () => {
             </div>  
         </div>
       </div> 
+
+
+      <div className="container mx-auto px-4 my-4">
+
+        <div className="w-full relative popular-brands">
+        <div class="home-heading text-center">
+          <h2>Our Popular Brands</h2>
+          <p>Trusted by Millions, Loved Worldwide</p>
+          </div>
+          <Swiper
+            modules={[Navigation, Pagination, Autoplay]}
+            navigation={{
+              nextEl: '.swiper-button-next',
+              prevEl: '.swiper-button-prev',
+            }}
+            pagination={{ clickable: true }}
+            autoplay={{ delay: 3000, disableOnInteraction: false }}
+            loop breakpoints={{
+              640: {
+                slidesPerView: 2, // For small screens (like mobile)
+              },
+              768: {
+                slidesPerView: 4, // For tablets
+              },
+              1024: {
+                slidesPerView: 6, // For medium screens
+              },
+              1280: {
+                slidesPerView: 6, // For large screens
+              },
+            }}
+            className="h-full"
+          >
+          <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
+            <div className="">
+              <img src={pb1} className="rounded-full" />  
+            </div>  
+          </SwiperSlide>
+            <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
+              <div className="">
+                <img src={pb2} className="rounded-full" />  
+              </div>  
+            </SwiperSlide>
+            <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
+              <div className="">
+                <img src={pb3} className="rounded-full" />  
+              </div>  
+            </SwiperSlide>
+            <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
+              <div className="">
+                <img src={pb4} className="rounded-full" />  
+              </div>  
+            </SwiperSlide>
+            <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
+              <div className="">
+                <img src={pb5} className="rounded-full" />  
+              </div>  
+            </SwiperSlide>
+            <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
+              <div className="">
+                <img src={pb6} className="rounded-full" />  
+              </div>  
+            </SwiperSlide>
+          </Swiper>
+          {/* Custom Navigation Buttons */}
+          <button className="swiper-button-prev absolute top-1/2 left-4 transform -translate-y-1/2 bg-gray-700 text-white p-2 rounded-full z-10">
+            Prev
+          </button>
+          <button className="swiper-button-next absolute top-1/2 right-4 transform -translate-y-1/2 bg-gray-700 text-white p-2 rounded-full z-10">
+            Next
+          </button>
+    </div>
+      </div>
+      
       
 
       {categoryData?.map((c) => (
