@@ -69,13 +69,13 @@ const CategoryWiseProductDisplay = ({ id, name }) => {
 
   const redirectURL =  handleRedirectProductListpage()
     return (
-        <div>
-            <div className='container mx-auto p-4 flex items-center justify-between gap-4'>
-                <h3 className='font-semibold text-lg md:text-xl'>{name}</h3>
-                <Link  to={redirectURL} className='text-green-600 hover:text-green-400'>See All</Link>
+        <div className='container mx-auto px-4'>
+            <div className='home-heading text-center relative'>
+                <h2 className='font-semibold text-lg md:text-xl'>{name}</h2>
+                <Link  to={redirectURL} className='text-green-600 hover:text-green-400 absolute right-4 top-0'>See All</Link>
             </div>
             <div className='relative flex items-center '>
-                <div className=' flex gap-4 md:gap-6 lg:gap-8 container mx-auto px-4 overflow-x-scroll scrollbar-none scroll-smooth' ref={containerRef}>
+                <div className='grid grid-cols-5 px-4 overflow-x-scroll scrollbar-none scroll-smooth' ref={containerRef}>
                     {loading &&
                         loadingCardNumber.map((_, index) => {
                             return (
