@@ -138,8 +138,11 @@ const Home = () => {
         className="mySwiper"
       />
   
-      <div className="container mx-auto px-6 my-8 home-heading"/>
-        <h2 className="text-2xl font-bold my-8 text-center text-red">Brands</h2>
+      <div className="container mx-auto px-6 my-8"/>
+        <div className="home-heading">
+          <h2 className="text-2xl font-bold my-8 text-center text-red">Brands</h2>
+        </div>  
+        
         {loading ? (
           <p>Loading brands...</p>
         ) : error ? (
@@ -177,38 +180,40 @@ const Home = () => {
       </div>
 
 
-      <div className="container mx-auto px-6 my-4">
-  <h2 className="text-2xl font-bold mb-4">Top Selling Products</h2>
-  {loading ? (
-    <p>Loading top-selling products...</p>
-  ) : error ? (
-    <p className="text-red-600">{error}</p>
-  ) : (
-    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-      {topSellingProducts.map((product) => (
-        <div key={product._id} className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col justify-between h-full">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="w-full h-32 object-cover rounded-md mb-4"
-          />
-          <div className="flex-grow">
-            <h3 className="text-sm font-semibold text-gray-800">{product.name}</h3>
-          </div>
-          <div>
-            <p className="text-lg font-bold text-green-600">{product.price}₹</p>
-            <Link
-              to={`/product/${product._id}`}
-              className="inline-block bg-red-600 text-white py-2 px-4 rounded-lg mt-2 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
-            >
-              View Details
-            </Link>
-          </div>
+    <div className="container mx-auto px-6 my-4">
+      <div className="home-heading text-center relative">
+          <h2 className="text-2xl font-bold">Top Selling Products</h2>
+      </div>  
+      {loading ? (
+        <p>Loading top-selling products...</p>
+      ) : error ? (
+        <p className="text-red-600">{error}</p>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+          {topSellingProducts.map((product) => (
+            <div key={product._id} className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col justify-between h-full">
+              <img
+                src={product.image}
+                alt={product.name}
+                className="w-full h-32 object-cover rounded-md mb-4"
+              />
+              <div className="flex-grow">
+                <h3 className="text-sm font-semibold text-gray-800">{product.name}</h3>
+              </div>
+              <div>
+                <p className="text-lg font-bold text-green-600">{product.price}₹</p>
+                <Link
+                  to={`/product/${product._id}`}
+                  className="inline-block bg-red-600 text-white py-2 px-4 rounded-lg mt-2 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                >
+                  View Details
+                </Link>
+              </div>
+            </div>
+          ))}
         </div>
-      ))}
+      )}
     </div>
-  )}
-</div>
 
 
       {/** update catgrpry */}

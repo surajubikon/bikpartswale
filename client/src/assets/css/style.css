@@ -14,6 +14,10 @@
 .text-red {
     color: #E63946;
 }
+.home-heading {
+    margin-top: 65px;
+    margin-bottom: 47px;
+}
 .home-heading h2 {
     font-size: 32px;
     color: #E63946;
@@ -34,9 +38,6 @@
     height: 100px;
     object-fit: cover;
     border-radius: 8px;
-}
-.brake-clutch {
-    margin-top: 65px;
 }
 .brake-clutch .home-heading {
     margin-bottom: 47px;
