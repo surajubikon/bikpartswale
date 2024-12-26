@@ -50,6 +50,11 @@ const orderSchema = new mongoose.Schema({
         type: Number,
         default: 0 // Jab naya product banega to sales default 0 hogi
     },
+    order_status: {
+        type: String,
+        enum: ['Pending', 'Accepted', 'Shipped', 'Delivered', 'Canceled'],
+        default: 'Pending'  // Default status when an order is placed
+    },
 },{
     timestamps : true
 })

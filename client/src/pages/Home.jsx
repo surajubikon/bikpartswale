@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import banner from "../assets/b.jpg";
 import bannerMobile from "../assets/bannermob.jpg";
 import CategoryWiseProductDisplay from "../components/CategoryWiseProductDisplay";
+// import BrandWiseProductDisplay from "../components/BrandWiseProductDisplay";
 import { valideURLConvert } from "../utils/valideURLConvert";
 import { Navigation, Pagination } from 'swiper/modules';
 import 'swiper/css';

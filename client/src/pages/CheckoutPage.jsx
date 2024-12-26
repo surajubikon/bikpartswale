@@ -28,60 +28,82 @@ const CheckoutPage = () => {
       document.body.appendChild(script);
     });
   };
-
   const handleOnlinePayment = async () => {
-    const res = await loadRazorpayScript();
-    if (!res) {
-      toast.error('Failed to load Razorpay SDK. Please try again.');
-      return;
-    }
+    try {
+      const res = await loadRazorpayScript();
+      if (!res) {
+        toast.error('Failed to load Razorpay SDK. Please try again.');
+        return;
+      }
 
-    const options = {
-      key: RAZORPAY_KEY_ID,
-      amount: totalPrice * 100, // Razorpay requires the amount in paise
-      currency: 'INR',
-      name: 'E-commerce Checkout',
-      description: 'Thank you for your purchase!',
-      handler: async (response) => {
-        try {
-          const paymentData = {
-            paymentId: response.razorpay_payment_id,
-            amount: totalPrice,
-            addressId: addressList[selectAddress]?._id,
-            list_items: cartItemsList,
-          };
+      // Create Razorpay order
+      const createOrderResponse = await Axios({
+        ...SummaryApi.createOrder,
+        url: '/api/order/create-order',
+        method: 'POST',
+        data: {
+          amount: totalPrice,
+          currency: 'INR',
+        },
+      });
 
-          const apiResponse = await Axios({
-            ...SummaryApi.OnlinePaymentOrder,
-            url: '/api/order/create-order',
-            method: 'POST',
-            data: paymentData,
-          });
+      const { id: order_id } = createOrderResponse.data.data;
 
-          if (apiResponse.data.success) {
-            toast.success(apiResponse.data.message);
-            if (fetchCartItem) fetchCartItem();
-            if (fetchOrder) fetchOrder();
-            navigate('/success', {
-              state: { text: 'Order' },
+      const options = {
+        key: RAZORPAY_KEY_ID,
+        amount: totalPrice * 100,
+        currency: 'INR',
+        name: 'E-commerce Checkout',
+        description: 'Thank you for your purchase!',
+        order_id,
+        handler: async (response) => {
+          try {
+            const paymentData = {
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_signature: response.razorpay_signature,
+              totalAmt: totalPrice,
+              addressId: addressList[selectAddress]?._id,
+              list_items: cartItemsList,
+            };
+
+            const verifyResponse = await Axios({
+              ...SummaryApi.payment_url,
+              url: '/api/order/verify-payment',
+              method: 'POST',
+              data: paymentData,
             });
-          }
-        } catch (error) {
-          AxiosToastError(error);
-        }
-      },
-      prefill: {
-        name: 'Guest User', // Replace with dynamic user data if available
-        email: 'guest@example.com',
-        contact: '0000000000',
-      },
-      theme: {
-        color: '#3399cc',
-      },
-    };
 
-    const rzp = new window.Razorpay(options);
-    rzp.open();
+            if (verifyResponse.data.success) {
+              toast.success(verifyResponse.data.message);
+              if (fetchCartItem) fetchCartItem();
+              if (fetchOrder) fetchOrder();
+              navigate('/success', { state: { text: 'Order' } });
+            }
+          } catch (error) {
+            AxiosToastError(error);
+          }
+        },
+        prefill: {
+          name: 'Guest User',
+          email: 'guest@example.com',
+          contact: '0000000000',
+        },
+        theme: {
+          color: '#3399cc',
+        },
+        modal: {
+          ondismiss: function() {
+              toast.error('Payment process was cancelled.');
+          }
+      }
+      };
+
+      const rzp = new window.Razorpay(options);
+      rzp.open();
+    } catch (error) {
+      AxiosToastError(error);
+    }
   };
 
   const handleCashOnDelivery = async () => {
@@ -97,20 +119,17 @@ const CheckoutPage = () => {
         },
       });
 
-      const { data: responseData } = response;
-
-      if (responseData.success) {
-        toast.success(responseData.message);
+      if (response.data.success) {
+        toast.success(response.data.message);
         if (fetchCartItem) fetchCartItem();
         if (fetchOrder) fetchOrder();
-        navigate('/success', {
-          state: { text: 'Order' },
-        });
+        navigate('/success', { state: { text: 'Order' } });
       }
     } catch (error) {
       AxiosToastError(error);
     }
   };
+
 
   return (
     <section className='bg-blue-50'>

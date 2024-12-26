@@ -40,21 +40,22 @@ export async function CashOnDeliveryOrderController(request, response) {
             },
             paymentId: "",
             payment_status: "PENDING",
+            payment_mode: "Cash on Delivery",
             delivery_address: addressId,
             totalAmt,
         }));
-         // Increment salesCount for each product
-        //  await Promise.all(
-        //     list_items.map(async (el) => {
-        //         await ProductModel.findByIdAndUpdate(el.productId._id, {
-        //             $inc: { salesCount: 1 },
-        //         });
-        //     })
-        // );
-        await ProductModel.updateOne(
-            { _id: el.productId._id }, 
-            { $inc: { sales: 1 } }  // Increment sales by 1
+        //  Increment salesCount for each product
+         await Promise.all(
+            list_items.map(async (el) => {
+                await ProductModel.findByIdAndUpdate(el.productId._id, {
+                    $inc: { salesCount: 1 },
+                });
+            })
         );
+        // await ProductModel.updateOne(
+        //     { _id: el.productId._id }, 
+        //     { $inc: { sales: 1 } }  // Increment sales by 1
+        // );
 
         const generatedOrder = await OrderModel.insertMany(payload);
 
@@ -81,9 +82,9 @@ export async function createRazorpayOrderController(request, response) {
         const { amount, currency } = request.body;
 
         const options = {
-            amount: amount * 100,
+            amount: amount * 100, // amount in paisa (Razorpay accepts in paisa)
             currency: currency || "INR",
-            receipt: `receipt_${new mongoose.Types.ObjectId()}`,
+            receipt: `receipt_${new mongoose.Types.ObjectId()}`, // generate unique receipt
         };
 
         const razorpayOrder = await razorpay.orders.create(options);
@@ -103,12 +104,11 @@ export async function createRazorpayOrderController(request, response) {
 
 // Verify Razorpay Payment
 export async function verifyRazorpayPaymentController(request, response) {
-    const session = await mongoose.startSession();
-    session.startTransaction();
     try {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature, list_items, totalAmt, addressId } = request.body;
         const userId = request.userId;
 
+        // Generate signature to verify payment
         const generatedSignature = crypto
             .createHmac("sha256", process.env.RAZORPAY_SECRET)
             .update(`${razorpay_order_id}|${razorpay_payment_id}`)
@@ -118,15 +118,17 @@ export async function verifyRazorpayPaymentController(request, response) {
             return response.status(400).json({ success: false, message: "Payment verification failed" });
         }
 
-        const paymentRecord = await PaymentModel.create([{
+        // Create payment record in the database
+        const paymentRecord = await PaymentModel.create({
             razorpay_order_id,
             razorpay_payment_id,
             razorpay_signature,
             status: "PAID",
             amount: totalAmt,
             userId,
-        }], { session });
+        });
 
+        // Prepare order payload for insertion
         const payload = list_items.map((el) => ({
             userId,
             orderId: `ORD-${new mongoose.Types.ObjectId()}`,
@@ -134,30 +136,27 @@ export async function verifyRazorpayPaymentController(request, response) {
             product_details: { name: el.productId.name, image: el.productId.image },
             paymentId: razorpay_payment_id,
             payment_status: "PAID",
+            payment_mode: "Online Payment",
             delivery_address: addressId,
             totalAmt,
         }));
 
-
-        // Increment salesCount for each product
-        // await Promise.all(
-        //     list_items.map(async (el) => {
-        //         await ProductModel.findByIdAndUpdate(el.productId._id, {
-        //             $inc: { salesCount: 1 },
-        //         }, { session });
-        //     })
-        // );
-        await ProductModel.updateOne(
-            { _id: el.productId._id }, 
-            { $inc: { sales: 1 } }  // Increment sales by 1
+        // Increment sales count for each product
+        await Promise.all(
+            list_items.map(async (el) => {
+                await ProductModel.updateOne(
+                    { _id: el.productId._id },
+                    { $inc: { sales: 1 } }
+                );
+            })
         );
 
-        const generatedOrder = await OrderModel.insertMany(payload, { session });
+        // Insert order records in the database
+        const generatedOrder = await OrderModel.insertMany(payload);
 
-        await CartProductModel.deleteMany({ userId }, { session });
-        await UserModel.findOneAndUpdate({ _id: userId }, { shopping_cart: [] }, { session });
-
-        await session.commitTransaction();
+        // Clear user's cart after placing the order
+        await CartProductModel.deleteMany({ userId });
+        await UserModel.findOneAndUpdate({ _id: userId }, { shopping_cart: [] });
 
         return response.status(200).json({
             success: true,
@@ -166,60 +165,103 @@ export async function verifyRazorpayPaymentController(request, response) {
             paymentDetails: paymentRecord,
         });
     } catch (error) {
-        await session.abortTransaction();
         console.error(error);
         return response.status(500).json({
             success: false,
             message: error.message || "Payment verification failed",
         });
-    } finally {
-        session.endSession();
     }
 }
+
 
 // Get Order Details
-export async function getOrderDetailsController(request,response){
+export async function getOrderDetailsController(request, response) {
     try {
-        const userId = request.userId // order id
+        const userId = request.userId; // From auth middleware
+        const user = await UserModel.findById(userId); // Fetch the user's details
 
-        const orderlist = await OrderModel.find({ userId : userId }).sort({ createdAt : -1 }).populate('delivery_address')
-
+        // If the user is an admin, show all orders
+        if (user.role === 'ADMIN') {
+            const orderlist = await OrderModel.find()
+                .sort({ createdAt: -1 })
+                .populate('userId')
+                .populate('delivery_address') // Populate the delivery address
+                .populate('productId'); // Populate product details
+        
+            return response.json({
+                message: "All orders for admin",
+                data: orderlist,
+                error: false,
+                success: true
+            });
+        }
+        
+        // If the user is not an admin, show only their own orders
+        const orderlist = await OrderModel.find({ userId: userId })
+            .sort({ createdAt: -1 })
+            .populate('delivery_address') // Populate the delivery address
+            .populate('productId'); // Populate product details
+        
         return response.json({
-            message : "order list",
-            data : orderlist,
-            error : false,
-            success : true
-        })
+            message: "User's order list",
+            data: orderlist,
+            error: false,
+            success: true
+        });
     } catch (error) {
         return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
+            message: error.message || error,
+            error: true,
+            success: false
+        });
     }
 }
 
-// Get All Orders (Admin)
-// export async function getAllOrdersController(request, response) {
-//     try {
-//         if (!request.isAdmin) {
-//             return response.status(403).json({ success: false, message: "Access denied. Only admins can view this data." });
-//         }
+// Update Order Status by Admin
+export async function updateOrderStatusController(request, response) {
+    try {
+        const { status } = request.body;  // Get the new status from the body
+        const { orderId } = request.params; // Get the orderId from the URL parameters
+        const userId = request.userId; // From auth middleware (assuming userId is set)
+     
+        console.log('User ID:', userId); // Log user ID
+        console.log('Order ID:', orderId); // Log order ID
+        console.log('Status:', status); // Log status
 
-//         const allOrders = await OrderModel.find()
-//             .sort({ createdAt: -1 })
-//             .populate("delivery_address");
+        // Check if the user is admin
+        const user = await UserModel.findById(userId);
+        if (user.role !== 'ADMIN') {
+            return response.status(403).json({
+                success: false,
+                message: "You are not authorized to update order status",
+            });
+        }
 
-//         return response.status(200).json({
-//             success: true,
-//             message: "All orders retrieved successfully",
-//             data: allOrders,
-//         });
-//     } catch (error) {
-//         console.error(error);
-//         return response.status(500).json({
-//             success: false,
-//             message: error.message || "Failed to retrieve orders",
-//         });
-//     }
-// }
+        // Update the order status in the database
+        const updatedOrder = await OrderModel.findByIdAndUpdate(
+            orderId,
+            { order_status: status }, // Update the correct field
+            { new: true } // Return the updated document
+        );
+
+        if (!updatedOrder) {
+            return response.status(404).json({
+                success: false,
+                message: "Order not found",
+            });
+        }
+
+        // Send the updated order details as response
+        return response.status(200).json({
+            success: true,
+            message: "Order status updated successfully",
+            data: updatedOrder,
+        });
+    } catch (error) {
+        console.error(error);
+        return response.status(500).json({
+            success: false,
+            message: error.message || "Failed to update order status",
+        });
+    }
+}

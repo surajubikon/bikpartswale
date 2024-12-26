@@ -5,21 +5,23 @@ import mongoose from 'mongoose';
 const subBrandSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
-  },
-  category: {  // This will link to the Brand
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'brand',
-    required: true,
+   default : ""
   },
   image: {
     type: String,
-    required: true,
+    default : ""
   },
+  brand: [
+    {
+    type: mongoose.Schema.ObjectId,
+    ref: "brand",
+    required: true,  // Corrected reference to the Brand model
+  }
+  ]
 }, {
   timestamps: true,
 });
 
-const SubBrand = mongoose.model('subBrand', subBrandSchema);
+const SubBrand = mongoose.model('subBrands', subBrandSchema);
 
 export default SubBrand;

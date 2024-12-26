@@ -14,7 +14,7 @@ const BrandsModelSchema = new mongoose.Schema({
 })
 
 
-const BrandsModel = mongoose.model('brands', BrandsModelSchema);  // Correct model name
+const BrandsModel = mongoose.model('brand', BrandsModelSchema);  // Correct model name
 
 
 export default BrandsModel

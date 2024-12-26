@@ -146,8 +146,12 @@ const SummaryApi = {
         method: 'post',
     },
     payment_url: {
-        url: '/api/order/checkout',
+        url: '/api/order/verify-payment',
         method: 'post',
+    },
+    createOrder: {
+        url :'api/order/create-order',
+        method : 'post',
     },
     getOrderItems: {
         url: '/api/order/order-list',

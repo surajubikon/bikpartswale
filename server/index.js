@@ -40,8 +40,7 @@ app.get("/",(request,response)=>{
 
 app.use('/api/user',userRouter)
 app.use("/api/category",categoryRouter)
-app.use("/api/brand-models",brandsmodelsRouter)
-// app.use("/api/admin/orders", adminOrderRouter);
+app.use("/api/brand-models",brandsmodelsRouter);
 app.use('/api/sub-brands', subBrandRouter);
 app.use("/api/file",uploadRouter)
 app.use("/api/subcategory",subCategoryRouter)
@@ -49,8 +48,6 @@ app.use("/api/product",productRouter)
 app.use("/api/cart",cartRouter)
 app.use("/api/address",addressRouter)
 app.use('/api/order',orderRouter)
-// app.use('/api/order',orderRouter)
-
 connectDB().then(()=>{
     app.listen(PORT,()=>{
         console.log("Server is running",PORT)

@@ -1,0 +1,566 @@
+// import React, { useState, useEffect } from 'react';
+// import { IoClose } from "react-icons/io5";
+// import uploadImage from '../utils/UploadImage';
+// import { useSelector } from 'react-redux';
+// import Axios from '../utils/Axios';
+// import SummaryApi from '../common/SummaryApi';
+// import toast from 'react-hot-toast';
+// import AxiosToastError from '../utils/AxiosToastError';
+
+// const UploadSubCategoryModel = ({ close, fetchData }) => {
+//     const [subCategoryData, setSubCategoryData] = useState({
+//         name: "",
+//         image: "",
+//         category: [],
+//         brand: "",  // Add brand field
+//     });
+
+//     const [brands, setBrands] = useState([]); // State to hold brands data
+//     const allCategory = useSelector(state => state.product.allCategory);
+
+//     // Fetch brands data when component mounts
+//     useEffect(() => {
+//         const fetchBrands = async () => {
+//             try {
+//                 const response = await Axios({
+//                     ...SummaryApi.getBrands, // API endpoint for fetching brands
+//                 });
+//                 const { data: responseData } = response;
+
+//                 if (responseData.success) {
+//                     setBrands(responseData.data);
+//                 }
+//             } catch (error) {
+//                 AxiosToastError(error);
+//             }
+//         };
+
+//         fetchBrands();
+//     }, []);
+
+//     const handleChange = (e) => {
+//         const { name, value } = e.target;
+
+//         setSubCategoryData((prev) => {
+//             return {
+//                 ...prev,
+//                 [name]: value,
+//             };
+//         });
+//     };
+
+//     const handleUploadSubCategoryImage = async (e) => {
+//         const file = e.target.files[0];
+
+//         if (!file) {
+//             return;
+//         }
+
+//         const response = await uploadImage(file);
+//         const { data: ImageResponse } = response;
+
+//         setSubCategoryData((prev) => {
+//             return {
+//                 ...prev,
+//                 image: ImageResponse.data.url,
+//             };
+//         });
+//     };
+
+//     const handleRemoveCategorySelected = (categoryId) => {
+//         const index = subCategoryData.category.findIndex((el) => el._id === categoryId);
+//         subCategoryData.category.splice(index, 1);
+//         setSubCategoryData((prev) => {
+//             return {
+//                 ...prev,
+//             };
+//         });
+//     };
+
+//     const handleSubmitSubCategory = async(e) => {
+//         e.preventDefault();
+    
+//         // Check if either category or brand is selected
+//         if (!subCategoryData.category.length && !subCategoryData.brand) {
+//             toast.error("Please select either a category or a brand.");
+//             return; // Don't submit if neither is selected
+//         }
+    
+//         try {
+//             const response = await Axios({
+//                 ...SummaryApi.createSubCategory,
+//                 data: subCategoryData
+//             });
+    
+//             const { data: responseData } = response;
+    
+//             if (responseData.success) {
+//                 toast.success(responseData.message);
+//                 if (close) {
+//                     close();
+//                 }
+//                 if (fetchData) {
+//                     fetchData();
+//                 }
+//             }
+    
+//         } catch (error) {
+//             AxiosToastError(error);
+//         }
+//     };
+    
+
+//     return (
+//         <section className='fixed top-0 right-0 bottom-0 left-0 bg-neutral-800 bg-opacity-70 z-50 flex items-center justify-center p-4'>
+//             <div className='w-full max-w-5xl bg-white p-4 rounded'>
+//                 <div className='flex items-center justify-between gap-3'>
+//                     <h1 className='font-semibold'>Add Sub Category</h1>
+//                     <button onClick={close}>
+//                         <IoClose size={25} />
+//                     </button>
+//                 </div>
+//                 <form className='my-3 grid gap-3' onSubmit={handleSubmitSubCategory}>
+//                     <div className='grid gap-1'>
+//                         <label htmlFor='name'>Name</label>
+//                         <input
+//                             id='name'
+//                             name='name'
+//                             value={subCategoryData.name}
+//                             onChange={handleChange}
+//                             className='p-3 bg-blue-50 border outline-none focus-within:border-primary-200 rounded '
+//                         />
+//                     </div>
+//                     <div className='grid gap-1'>
+//                         <p>Image</p>
+//                         <div className='flex flex-col lg:flex-row items-center gap-3'>
+//                             <div className='border h-36 w-full lg:w-36 bg-blue-50 flex items-center justify-center'>
+//                                 {
+//                                     !subCategoryData.image ? (
+//                                         <p className='text-sm text-neutral-400'>No Image</p>
+//                                     ) : (
+//                                         <img
+//                                             alt='subCategory'
+//                                             src={subCategoryData.image}
+//                                             className='w-full h-full object-scale-down'
+//                                         />
+//                                     )
+//                                 }
+//                             </div>
+//                             <label htmlFor='uploadSubCategoryImage'>
+//                                 <div className='px-4 py-1 border border-primary-100 text-primary-200 rounded hover:bg-primary-200 hover:text-neutral-900 cursor-pointer  '>
+//                                     Upload Image
+//                                 </div>
+//                                 <input
+//                                     type='file'
+//                                     id='uploadSubCategoryImage'
+//                                     className='hidden'
+//                                     onChange={handleUploadSubCategoryImage}
+//                                 />
+//                             </label>
+//                         </div>
+//                     </div>
+
+//                     <div className='grid gap-1'>
+//                         <label>Select Category</label>
+//                         <div className='border focus-within:border-primary-200 rounded'>
+//                             <div className='flex flex-wrap gap-2'>
+//                                 {
+//                                     subCategoryData.category.map((cat, index) => {
+//                                         return (
+//                                             <p key={cat._id + "selectedValue"} className='bg-white shadow-md px-1 m-1 flex items-center gap-2'>
+//                                                 {cat.name}
+//                                                 <div className='cursor-pointer hover:text-red-600' onClick={() => handleRemoveCategorySelected(cat._id)}>
+//                                                     <IoClose size={20} />
+//                                                 </div>
+//                                             </p>
+//                                         );
+//                                     })
+//                                 }
+//                             </div>
+
+//                             <select
+//                                 className='w-full p-2 bg-transparent outline-none border'
+//                                 onChange={(e) => {
+//                                     const value = e.target.value;
+//                                     const categoryDetails = allCategory.find(el => el._id == value);
+
+//                                     setSubCategoryData((prev) => {
+//                                         return {
+//                                             ...prev,
+//                                             category: [...prev.category, categoryDetails],
+//                                         };
+//                                     });
+//                                 }}
+//                             >
+//                                 <option value={""}>Select Category</option>
+//                                 {
+//                                     allCategory.map((category, index) => {
+//                                         return (
+//                                             <option value={category?._id} key={category._id + "subcategory"}>{category?.name}</option>
+//                                         );
+//                                     })
+//                                 }
+//                             </select>
+//                         </div>
+//                     </div>
+
+//                     {/* Add Brand Dropdown */}
+//                   <  div className='grid gap-1'>
+//                         <label>Select Brand</label>
+//                         <div className='border focus-within:border-primary-200 rounded'>
+//                             <select
+//                                 className='w-full p-2 bg-transparent outline-none border'
+//                                 onChange={(e) => {
+//                                     setSubCategoryData((prev) => {
+//                                         return {
+//                                             ...prev,
+//                                             brand: e.target.value,  // Set selected brand
+//                                         };
+//                                     });
+//                                 }}
+//                             >
+//                                 <option value={""}>Select Brand</option>
+//                                 {
+//                                     brands.map((brand, index) => {
+//                                         return (
+//                                             <option value={brand._id} key={brand._id + "brand"}>{brand.name}</option>
+//                                         );
+//                                     })
+//                                 }
+//                             </select>
+//                         </div>
+//                     </div>
+
+//                     <button
+//                         className={`px-4 py-2 border
+//                             ${subCategoryData?.name && subCategoryData?.image && subCategoryData?.category[0] && subCategoryData?.brand ? "bg-primary-200 hover:bg-primary-100" : "bg-gray-200"}    
+//                             font-semibold
+//                         `}
+//                     >
+//                         Submit
+//                     </button>
+
+//                 </form>
+//             </div>
+//         </section>
+//     );
+// }
+// ____++
+// export default UploadSubCategoryModel;
+
+
+
+
+
+//
+import React, { useEffect, useState } from 'react';
+import UploadSubBrandModel from '../components/UploadSubBrandModel';
+import AxiosToastError from '../utils/AxiosToastError';
+import Axios from '../utils/Axios';
+import SummaryApi from '../common/SummaryApi';
+import DisplayTable from '../components/DisplayTable';
+import { createColumnHelper } from '@tanstack/react-table';
+import ViewImage from '../components/ViewImage';
+import { HiPencil } from "react-icons/hi";
+import { MdDelete } from "react-icons/md";
+import EditSubBrand from '../components/EditSubBrand';
+import CofirmBox from '../components/CofirmBox';
+import toast from 'react-hot-toast';
+
+const SubBrandsPage = () => {
+  const [openAddSubBrand, setOpenAddSubBrand] = useState(false);
+  const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const columnHelper = createColumnHelper();
+  const [ImageURL, setImageURL] = useState("");
+  const [openEdit, setOpenEdit] = useState(false);
+  const [editData, setEditData] = useState({
+    _id: ""
+  });
+  const [deleteSubBrand, setDeleteSubBrand] = useState({
+    _id: ""
+  });
+  const [openDeleteConfirmBox, setOpenDeleteConfirmBox] = useState(false);
+
+  const fetchSubBrand = async () => {
+    try {
+      setLoading(true);
+      const response = await Axios.get("http://localhost:8080/api/sub-brands/get");
+      const { data: responseData } = response;
+      console.log(responseData); // <-- Check the response data here
+      if (responseData.success) {
+        setData(responseData.data);
+      }
+    } catch (error) {
+      AxiosToastError(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchSubBrand();
+  }, []);
+
+  const column = [
+    columnHelper.accessor('name', {
+      header: "Name"
+    }),
+    columnHelper.accessor('image', {
+      header: "Image",
+      cell: ({ row }) => {
+        return <div className='flex justify-center items-center'>
+          <img
+            src={row.original.image}
+            alt={row.original.name}
+            className='w-8 h-8 cursor-pointer'
+            onClick={() => {
+              setImageURL(row.original.image);
+            }}
+          />
+        </div>
+      }
+    }),
+    columnHelper.accessor("brand", {
+      header: "Brand",
+      cell: ({ row }) => {
+        return (
+          <p key={row.original.brand._id} className='shadow-md px-1 inline-block'>{row.original.brand.name}</p>
+        );
+      }
+    }),
+    columnHelper.accessor("_id", {
+      header: "Action",
+      cell: ({ row }) => {
+        return (
+          <div className='flex items-center justify-center gap-3'>
+            <button onClick={() => {
+              setOpenEdit(true);
+              setEditData(row.original);
+            }} className='p-2 bg-green-100 rounded-full hover:text-green-600'>
+              <HiPencil size={20} />
+            </button>
+            <button onClick={() => {
+              setOpenDeleteConfirmBox(true);
+              setDeleteSubBrand(row.original);
+            }} className='p-2 bg-red-100 rounded-full text-red-500 hover:text-red-600'>
+              <MdDelete size={20} />
+            </button>
+          </div>
+        );
+      }
+    })
+  ];
+
+  const handleDeleteSubBrand = async () => {
+    try {
+      const response = await Axios({
+        ...SummaryApi.deleteSubBrand,
+        data: deleteSubBrand
+      });
+
+      const { data: responseData } = response;
+
+      if (responseData.success) {
+        toast.success(responseData.message);
+        fetchSubBrand();
+        setOpenDeleteConfirmBox(false);
+        setDeleteSubBrand({ _id: "" });
+      }
+    } catch (error) {
+      AxiosToastError(error);
+    }
+  };
+
+  return (
+    <section className=''>
+      <div className='p-2 bg-white shadow-md flex items-center justify-between'>
+        <h2 className='font-semibold'>Sub Brand</h2>
+        <button onClick={() => setOpenAddSubBrand(true)} className='text-sm border border-primary-200 hover:bg-primary-200 px-3 py-1 rounded'>Add Sub Brand</button>
+      </div>
+
+      <div className='overflow-auto w-full max-w-[95vw]'>
+        <DisplayTable
+          data={data}
+          column={column}
+        />
+      </div>
+
+      {
+        openAddSubBrand && (
+          <UploadSubBrandModel
+            close={() => setOpenAddSubBrand(false)}
+            fetchData={fetchSubBrand}
+          />
+        )
+      }
+
+      {
+        ImageURL &&
+        <ViewImage url={ImageURL} close={() => setImageURL("")} />
+      }
+
+      {
+        openEdit &&
+        <EditSubBrand
+          data={editData}
+          close={() => setOpenEdit(false)}
+          fetchData={fetchSubBrand}
+        />
+      }
+
+      {
+        openDeleteConfirmBox && (
+          <CofirmBox
+            cancel={() => setOpenDeleteConfirmBox(false)}
+            close={() => setOpenDeleteConfirmBox(false)}
+            confirm={handleDeleteSubBrand}
+          />
+        )
+      }
+    </section>
+  );
+};
+
+export default SubBrandsPage;
+
+
+/// my order
+import React, { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom'; 
+import NoData from '../components/NoData';
+
+const MyOrders = () => {
+  const orders = useSelector(state => state.orders.order);
+  const navigate = useNavigate(); 
+  const [isModalOpen, setIsModalOpen] = useState(false); 
+  const [selectedOrder, setSelectedOrder] = useState(null); 
+
+  const handleImageClick = (productId) => {
+    navigate(`/product/${productId}`);
+  };
+
+  const openModal = (order) => {
+    setSelectedOrder(order); 
+    setIsModalOpen(true); 
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false); 
+    setSelectedOrder(null); 
+  };
+
+  // Log orders to check the structure
+  console.log('Orders:', orders);
+
+  return (
+    <div>
+      <div className="bg-white shadow-md p-4 font-semibold mb-6">
+        <h1>My Orders</h1>
+      </div>
+
+      {!orders[0] && <NoData />}
+
+      {orders.length > 0 && (
+        <table className="min-w-full table-auto mt-5 border-collapse">
+          <thead>
+            <tr className="bg-orange-200 text-left">
+              <th className="border px-4 py-2">Order ID</th>
+              <th className="border px-4 py-2">Product Name</th>
+              <th className="border px-4 py-2">Image</th>
+              {/* Removed Quantity column */}
+              <th className="border px-4 py-2">Amount</th>
+              <th className="border px-4 py-2">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {orders.map((order, index) => (
+              <tr key={order._id + index + "order"} className="border-b">
+                <td className="border px-4 py-2">{order._id}</td>
+                <td className="border px-4 py-2">{order.product_details.name}</td>
+                <td className="border px-4 py-2">
+                  <img
+                    src={order.product_details.image[0]}
+                    alt={order.product_details.name}
+                    className="w-14 h-14 object-cover cursor-pointer"
+                    onClick={() => handleImageClick(order.productId)}  
+                  />
+                </td>
+                {/* Removed Quantity logic */}
+                <td className="border px-4 py-2">{order.totalAmt || 'N/A'}</td>
+                <td className="border px-4 py-2">
+                  <button
+                    className="bg-red-700 text-white px-4 py-2 rounded"
+                    onClick={() => openModal(order)} 
+                  >
+                    View Details
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+
+      {isModalOpen && selectedOrder && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+          <div className="bg-white p-6 rounded-lg w-full sm:w-96 max-w-lg relative overflow-auto">
+            <button
+              className="absolute top-2 right-2 text-2xl font-bold text-red-600 hover:text-black"
+              onClick={closeModal} 
+            >
+              &times;
+            </button>
+            <h2 className="text-xl font-semibold mb-4">Order Details</h2>
+
+            <div className="space-y-4">
+              <div className="grid grid-cols-3 gap-4 text-gray-700">
+                <div className="font-semibold">Order ID</div>
+                <div className="col-span-2">{selectedOrder.orderId}</div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 text-gray-700">
+                <div className="font-semibold">Product Name</div>
+                <div className="col-span-2">{selectedOrder.product_details.name}</div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 text-gray-700">
+                <div className="font-semibold">Product ID</div>
+                <div className="col-span-2">{selectedOrder.productId}</div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 text-gray-700">
+                <div className="font-semibold">User ID</div>
+                <div className="col-span-2">{selectedOrder.userId}</div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 text-gray-700">
+                <div className="font-semibold">Amount</div>
+                <div className="col-span-2">{selectedOrder.totalAmt || 'N/A'}</div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 text-gray-700">
+                <div className="font-semibold">Payment Mode</div>
+                <div className="col-span-2">{selectedOrder.payment_status}</div>
+              </div>
+
+              <div className="grid grid-cols-3 gap-4 text-gray-700">
+                <div className="font-semibold">Delivery Address</div>
+                <div className="col-span-2">
+                  {selectedOrder.delivery_address.address_line}<br />
+                  {selectedOrder.delivery_address.city}, {selectedOrder.delivery_address.state}<br />
+                  {selectedOrder.delivery_address.pincode}<br />
+                  {selectedOrder.delivery_address.country}<br />
+                  {selectedOrder.delivery_address.mobile}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default MyOrders;

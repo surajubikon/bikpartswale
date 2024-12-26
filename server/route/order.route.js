@@ -5,6 +5,7 @@ import {
     createRazorpayOrderController,
     verifyRazorpayPaymentController,
     getOrderDetailsController,
+    updateOrderStatusController
     
 } from '../controllers/order.controller.js';
 
@@ -21,10 +22,8 @@ orderRouter.post('/verify-payment', auth, verifyRazorpayPaymentController);
 
 // Get Order List
 orderRouter.get('/order-list', auth, getOrderDetailsController);
+// orderRouter.put('/updateStatus/:orderId',auth, updateOrderStatusController);
 
-
-// Get all orders for admin
-// orderRouter.get('/admin/order-list', auth, getAllOrdersController);
-
+orderRouter.put('/:orderId/update-status', auth, updateOrderStatusController);
 
 export default orderRouter;

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { IoClose } from "react-icons/io5";
 import uploadImage from '../utils/UploadImage';
-import { useSelector, useDispatch } from 'react-redux';
 import Axios from '../utils/Axios';
 import toast from 'react-hot-toast';
 import AxiosToastError from '../utils/AxiosToastError';
+import SummaryApi from '../common/SummaryApi';
 
 const UploadSubBrandModel = ({ close, fetchData }) => {
     const [subBrandData, setSubBrandData] = useState({
@@ -12,14 +12,25 @@ const UploadSubBrandModel = ({ close, fetchData }) => {
         image: "",
         brand: [],
     });
+    const [allBrands, setAllBrands] = useState([]); // List to hold fetched brands
 
-    const allBrands = useSelector(state => state.product.allBrands); // Brands list from Redux store
+    useEffect(() => {
+        const fetchBrands = async () => {
+            try {
+                const response = await Axios(SummaryApi.getBrands);
+                setAllBrands(response.data.data); // Fetch brands
+            } catch (error) {
+                AxiosToastError(error);
+            }
+        };
+        fetchBrands();
+    }, []);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
         setSubBrandData((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: value.trim(), // Trimming spaces
         }));
     };
 
@@ -30,7 +41,6 @@ const UploadSubBrandModel = ({ close, fetchData }) => {
         try {
             const response = await uploadImage(file);
             const { data: ImageResponse } = response;
-
             setSubBrandData((prev) => ({
                 ...prev,
                 image: ImageResponse.data.url,
@@ -50,27 +60,45 @@ const UploadSubBrandModel = ({ close, fetchData }) => {
 
     const handleSubmitSubBrand = async (e) => {
         e.preventDefault();
-
-        if (!subBrandData.name || !subBrandData.image || !subBrandData.brand.length) {
-            toast.error("Please fill in all required fields.");
+        const { name, image, brand } = subBrandData;
+    
+        if (!name || !image || brand.length === 0) {
+            toast.error("All fields are required!");
             return;
         }
-
+    
+        // Send only the first brand's ID
+        const payload = {
+            name,
+            image,
+            brand: brand[0]._id, // Assuming a single brand is required
+        };
+    
         try {
             const response = await Axios.post(
-                "https://your-backend-domain.com/api/sub-brands/add-subbrand",
-                subBrandData
+                "http://localhost:8080/api/sub-brands/add-subbrand",
+                payload
             );
-
             const { data: responseData } = response;
-
+    
             if (responseData.success) {
                 toast.success(responseData.message);
-                if (close) close();
-                if (fetchData) fetchData();
+                close?.(); // Close modal if defined
+                fetchData?.(); // Refresh data if defined
             }
         } catch (error) {
             AxiosToastError(error);
+        }
+    };
+    
+
+    const addBrandToSubBrand = (brandId) => {
+        const brandDetails = allBrands.find((brand) => brand._id === brandId);
+        if (brandDetails && !subBrandData.brand.find((b) => b._id === brandId)) {
+            setSubBrandData((prev) => ({
+                ...prev,
+                brand: [...prev.brand, brandDetails],
+            }));
         }
     };
 
@@ -124,51 +152,42 @@ const UploadSubBrandModel = ({ close, fetchData }) => {
 
                     <div className="grid gap-1">
                         <label>Select Brand</label>
-                        <div className="border focus-within:border-primary-200 rounded">
-                            <div className="flex flex-wrap gap-2">
-                                {subBrandData.brand?.map((brand) => (
-                                    <p key={brand._id + "selectedValue"} className="bg-white shadow-md px-1 m-1 flex items-center gap-2">
-                                        {brand.name}
-                                        <div
-                                            className="cursor-pointer hover:text-red-600"
-                                            onClick={() => handleRemoveBrandSelected(brand._id)}
-                                        >
-                                            <IoClose size={20} />
-                                        </div>
-                                    </p>
-                                ))}
+                        <select
+                            className="w-full p-2 bg-transparent outline-none border"
+                            onChange={(e) => addBrandToSubBrand(e.target.value)}
+                        >
+                            <option value="">Select Brand</option>
+                            {allBrands.map((brand) => (
+                                <option value={brand._id} key={brand._id}>
+                                    {brand.name}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+
+                    <div className="mt-2">
+                        {subBrandData.brand.map((brand) => (
+                            <div key={brand._id} className="flex items-center gap-2">
+                                <span>{brand.name}</span>
+                                <button
+                                    type="button"
+                                    onClick={() => handleRemoveBrandSelected(brand._id)}
+                                    className="text-red-500"
+                                >
+                                    Remove
+                                </button>
                             </div>
-
-                            <select
-                                className="w-full p-2 bg-transparent outline-none border"
-                                onChange={(e) => {
-                                    const selectedBrandId = e.target.value;
-                                    const selectedBrand = allBrands.find((el) => el._id === selectedBrandId);
-
-                                    if (selectedBrand && !subBrandData.brand.some(b => b._id === selectedBrandId)) {
-                                        setSubBrandData((prev) => ({
-                                            ...prev,
-                                            brand: [...prev.brand, selectedBrand],
-                                        }));
-                                    }
-                                }}
-                            >
-                                <option value="">Select Brand</option>
-                                {allBrands?.map((brand) => (
-                                    <option value={brand._id} key={brand._id}>
-                                        {brand.name}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                        ))}
                     </div>
 
                     <button
                         className={`px-4 py-2 border ${
-                            subBrandData?.name && subBrandData?.image && subBrandData?.brand.length
+                            subBrandData.name && subBrandData.image && subBrandData.brand.length
                                 ? "bg-primary-200 hover:bg-primary-100"
                                 : "bg-gray-200"
                         } font-semibold`}
+                        type="submit"
+                        disabled={!subBrandData.name || !subBrandData.image || !subBrandData.brand.length}
                     >
                         Submit
                     </button>

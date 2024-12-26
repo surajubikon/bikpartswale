@@ -10,7 +10,7 @@ const subBrandRouter = Router();
 subBrandRouter.post('/add-subbrand', auth, addSubBrandController);
 
 // Get SubBrands by Brand category
-subBrandRouter.get('/get/:brandId', getSubBrandsByCategoryController);
+subBrandRouter.get('/get', getSubBrandsByCategoryController);
 
 // Update a SubBrand
 subBrandRouter.put('/update', auth, updateSubBrandController);

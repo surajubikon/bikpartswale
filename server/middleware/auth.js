@@ -4,6 +4,9 @@ const auth = async(request,response,next)=>{
     try {
         const token = request.cookies.accessToken || request?.headers?.authorization?.split(" ")[1]
        
+       
+    console.log("Token in auth middleware:", token); // Log token for debugging
+
         if(!token){
             return response.status(401).json({
                 message : "Provide token"
@@ -19,18 +22,27 @@ const auth = async(request,response,next)=>{
                 success : false
             })
         }
+        if (decode.exp < Date.now() / 1000) {
+            return res.status(401).json({
+              message: "Token expired",
+              error: true,
+              success: false
+            });
+          }
+          
+        
+        // Attach userId to the request for further processing
+        request.userId = decode.id;
 
-        request.userId = decode.id
-
-        next()
-
+       next();
     } catch (error) {
+        console.error(error.message);  // Log the error for debugging
         return response.status(500).json({
-            message : "You have not login",///error.message || error,
-            error : true,
-            success : false
-        })
+            message: "You have not logged in",
+            error: true,
+            success: false
+        });
     }
-}
+};
 
 export default auth
