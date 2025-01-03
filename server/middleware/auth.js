@@ -5,7 +5,6 @@ const auth = async(request,response,next)=>{
         const token = request.cookies.accessToken || request?.headers?.authorization?.split(" ")[1]
        
        
-    console.log("Token in auth middleware:", token); // Log token for debugging
 
         if(!token){
             return response.status(401).json({
@@ -33,7 +32,7 @@ const auth = async(request,response,next)=>{
         
         // Attach userId to the request for further processing
         request.userId = decode.id;
-
+        request.user = { _id: decode.id };
        next();
     } catch (error) {
         console.error(error.message);  // Log the error for debugging

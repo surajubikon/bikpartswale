@@ -32,7 +32,6 @@ const SubBrandsPage = () => {
       setLoading(true);
       const response = await Axios.get("http://localhost:8080/api/sub-brands/get");
       const { data: responseData } = response;
-      console.log(responseData); // <-- Check the response data here
       if (responseData.success) {
         setData(responseData.data);
       }

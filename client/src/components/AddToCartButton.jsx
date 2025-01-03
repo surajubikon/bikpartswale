@@ -7,6 +7,7 @@ import AxiosToastError from '../utils/AxiosToastError'
 import Loading from './Loading'
 import { useSelector } from 'react-redux'
 import { FaMinus, FaPlus } from "react-icons/fa6";
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 
 const AddToCartButton = ({ data }) => {
     const { fetchCartItem, updateCartItem, deleteCartItem } = useGlobalContext()
@@ -15,6 +16,7 @@ const AddToCartButton = ({ data }) => {
     const [isAvailableCart, setIsAvailableCart] = useState(false)
     const [qty, setQty] = useState(0)
     const [cartItemDetails,setCartItemsDetails] = useState()
+    const navigate = useNavigate(); // Initialize useNavigate
 
     const handleADDTocart = async (e) => {
         e.preventDefault()
@@ -81,25 +83,40 @@ const AddToCartButton = ({ data }) => {
             }
         }
     }
+
+    const handleBuyNow = () => {
+        navigate('/checkout'); // Redirect to /checkout page
+    };
+
     return (
-        <div className='w-full max-w-[150px]'>
-            {
-                isAvailableCart ? (
-                    <div className='flex w-full h-full'>
-                        <button onClick={decreaseQty} className='bg-green-600 hover:bg-green-700 text-white flex-1 w-full p-1 rounded flex items-center justify-center'><FaMinus /></button>
-
-                        <p className='flex-1 w-full font-semibold px-1 flex items-center justify-center'>{qty}</p>
-
-                        <button onClick={increaseQty} className='bg-green-600 hover:bg-green-700 text-white flex-1 w-full p-1 rounded flex items-center justify-center'><FaPlus /></button>
-                    </div>
-                ) : (
-                    <button onClick={handleADDTocart} className='bg-green-600 hover:bg-green-700 text-white px-2 lg:px-4 py-1 rounded'>
-                        {loading ? <Loading /> : "Add"}
+        <div className='w-full max-w-[150px] flex flex-col gap-2'>
+        {
+            isAvailableCart ? (
+                <div className='flex w-full h-full gap-1'>
+                    <button onClick={decreaseQty} className='bg-green-600 hover:bg-green-700 text-white flex-1 w-full p-2 rounded flex items-center justify-center'>
+                        <FaMinus />
                     </button>
-                )
-            }
-
-        </div>
+    
+                    <p className='flex-1 w-full font-semibold px-2 flex items-center justify-center'>
+                        {qty}
+                    </p>
+    
+                    <button onClick={increaseQty} className='bg-green-600 hover:bg-green-700 text-white flex-1 w-full p-2 rounded flex items-center justify-center'>
+                        <FaPlus />
+                    </button>
+                </div>
+            ) : (
+                <button onClick={handleADDTocart} className='bg-red-600 hover:bg-gray-700 text-white px-2 lg:px-4 py-1 w-full rounded'>
+                    {loading ? <Loading /> : "Add"}
+                </button>
+            )
+        }
+    
+        <button onClick={handleBuyNow} className='bg-blue-600 hover:bg-gray-700 text-white px-2 lg:px-4 py-1 w-full rounded'>
+            Buy Now
+        </button>
+    </div>
+    
     )
 }
 

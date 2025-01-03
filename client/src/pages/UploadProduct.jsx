@@ -14,23 +14,30 @@ import successAlert from '../utils/SuccessAlert';
 import { useEffect } from 'react';
 
 const UploadProduct = () => {
-  const [data,setData] = useState({
-      name : "",
-      image : [],
-      category : [],
-      subCategory : [],
-      unit : "",
-      stock : "",
-      price : "",
-      discount : "",
-      description : "",
-      more_details : {},
-  })
+  const [data, setData] = useState({
+    name: "",
+    image: [],
+    category: [],
+    subCategory: [],
+    brand: [], // Initialize as an array
+    subBrand: [], // Initialize as an array
+    unit: "",
+    stock: "",
+    price: "",
+    discount: "",
+    description: "",
+    more_details: {},
+  });
+
   const [imageLoading,setImageLoading] = useState(false)
   const [ViewImageURL,setViewImageURL] = useState("")
   const allCategory = useSelector(state => state.product.allCategory)
+  const allBrands = useSelector(state => state.product.allBrands)
+  const allSubBrands = useSelector(state => state.product.allSubBrands)
   const [selectCategory,setSelectCategory] = useState("")
+  const [selectBrand,setSelectBrand] = useState("")
   const [selectSubCategory,setSelectSubCategory] = useState("")
+  const [selectSubBrand,setSelectSubBrand] = useState("")
   const allSubCategory = useSelector(state => state.product.allSubCategory)
 
   const [openAddField,setOpenAddField] = useState(false)
@@ -111,7 +118,6 @@ const UploadProduct = () => {
 
   const handleSubmit = async(e)=>{
     e.preventDefault()
-    console.log("data",data)
 
     try {
       const response = await Axios({
@@ -127,6 +133,8 @@ const UploadProduct = () => {
             image : [],
             category : [],
             subCategory : [],
+            brand:[],
+            subBrand:[],
             unit : "",
             stock : "",
             price : "",
@@ -304,6 +312,95 @@ const UploadProduct = () => {
                           return(
                             <div key={c._id+index+"productsection"} className='text-sm flex items-center gap-1 bg-blue-50 mt-2'>
                               <p>{c.name}</p>
+                              <div className='hover:text-red-500 cursor-pointer' onClick={()=>handleRemoveSubCategory(index)}>
+                                <IoClose size={20}/>
+                              </div>
+                            </div>
+                          )
+                        })
+                      }
+                    </div>
+                  </div>
+                </div>
+
+                <div className='grid gap-1'>
+                  <label className='font-medium'>Brand</label>
+                  <div>
+                    <select
+                      className='bg-blue-50 border w-full p-2 rounded'
+                      value={selectBrand}
+                      onChange={(e)=>{
+                        const value = e.target.value 
+                        const brand = allBrands.find(el => el._id === value )
+                        
+                        setData((preve)=>{
+                          return{
+                            ...preve,
+                            brand : [...preve.brand,brand],
+                          }
+                        })
+                        setSelectBrand("")
+                      }}
+                    >
+                      <option value={""}>Select Brand</option>
+                      {
+                        allBrands?.map((b,index)=>{
+                          return(
+                            <option value={b?._id}>{b.name}</option>
+                          )
+                        })
+                      }
+                    </select>
+                    <div className='flex flex-wrap gap-3'>
+                      {
+                        data.brand?.map((b,index)=>{
+                          return(
+                            <div key={b._id+index+"productsection"} className='text-sm flex items-center gap-1 bg-blue-50 mt-2'>
+                              <p>{b.name}</p>
+                              <div className='hover:text-red-500 cursor-pointer' onClick={()=>handleRemoveCategory(index)}>
+                                <IoClose size={20}/>
+                              </div>
+                            </div>
+                          )
+                        })
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div className='grid gap-1'>
+                  <label className='font-medium'>Sub Brand</label>
+                  <div>
+                    <select
+                      className='bg-blue-50 border w-full p-2 rounded'
+                      value={selectSubBrand}
+                      onChange={(e)=>{
+                        const value = e.target.value 
+                        const subBrand = allSubBrands.find(el => el._id === value )
+
+                        setData((preve)=>{
+                          return{
+                            ...preve,
+                            subBrand : [...preve.subBrand,subBrand]
+                          }
+                        })
+                        setSelectSubBrand("")
+                      }}
+                    >
+                      <option value={""} className='text-neutral-600'>Select Sub Brand</option>
+                      {
+                        allSubBrands?.map((b,index)=>{
+                          return(
+                            <option value={b?._id}>{b.name}</option>
+                          )
+                        })
+                      }
+                    </select>
+                    <div className='flex flex-wrap gap-3'>
+                      {
+                        data.subBrand?.map((b,index)=>{
+                          return(
+                            <div key={b._id+index+"productsection"} className='text-sm flex items-center gap-1 bg-blue-50 mt-2'>
+                              <p>{b.name}</p>
                               <div className='hover:text-red-500 cursor-pointer' onClick={()=>handleRemoveSubCategory(index)}>
                                 <IoClose size={20}/>
                               </div>

@@ -224,9 +224,7 @@ export async function updateOrderStatusController(request, response) {
         const { orderId } = request.params; // Get the orderId from the URL parameters
         const userId = request.userId; // From auth middleware (assuming userId is set)
      
-        console.log('User ID:', userId); // Log user ID
-        console.log('Order ID:', orderId); // Log order ID
-        console.log('Status:', status); // Log status
+
 
         // Check if the user is admin
         const user = await UserModel.findById(userId);

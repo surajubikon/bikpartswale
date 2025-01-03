@@ -17,7 +17,7 @@ import pb5 from "../assets/pb5.png";
 import pb6 from "../assets/pb6.png";
 
 import CategoryWiseProductDisplay from "../components/CategoryWiseProductDisplay";
-// import BrandWiseProductDisplay from "../components/BrandWiseProductDisplay";
+import BrandWiseProductDisplay from "../components/BrandWiseProductDisplay";
 import { valideURLConvert } from "../utils/valideURLConvert";
 // import { Navigation } from 'swiper/modules';
 import 'swiper/css';
@@ -32,11 +32,15 @@ const Home = () => {
   const loadingCategory = useSelector((state) => state.product.loadingCategory);
   const categoryData = useSelector((state) => state.product.allCategory);
   const subCategoryData = useSelector((state) => state.product.allSubCategory);
+  const brandData = useSelector((state) => state.product.allBrands);
+  const subBrandData = useSelector((state) => state.product.allSubBrands);
   const navigate = useNavigate();
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [topSellingProducts, setTopSellingProducts] = useState([]);
+
+
   useEffect(() => {
     const fetchBrands = async () => {
       try {
@@ -54,12 +58,11 @@ const Home = () => {
     const fetchTopSellingProducts = async () => {
       try {
         const response = await axios.get(
-         "http://localhost:8080/api/product/top-selling-products"
+          "http://localhost:8080/api/product/top-selling-products"
 
         );
         setTopSellingProducts(response.data?.data || []);
       } catch (err) {
-        console.log(response.data)
         console.error("Error fetching top-selling products:", err);
         setError("Failed to load top-selling products");
       }
@@ -68,8 +71,8 @@ const Home = () => {
     fetchBrands();
     fetchTopSellingProducts();
   }, []);
-  
-  
+
+
   const handleRedirectProductListpage = (id, cat) => {
     // Find the related subcategory
     const subcategory = subCategoryData.find((sub) =>
@@ -91,6 +94,23 @@ const Home = () => {
     navigate(url);
   };
 
+  const handleRedirectProductBrandListPage = (brandId, brandName) => {
+    const subbrand = subBrandData.find((sub) =>
+      Array.isArray(sub.brand) && sub.brand.some((b) => b._id === brandId)
+    );
+    if (!subbrand || !subbrand.name) {
+      console.error("subbrand not found or invalid data.");
+      return;
+    }
+
+    // Generate the valid URL
+    const url = `/${valideURLConvert(brandName)}-${brandId}/${valideURLConvert(
+      subbrand.name
+    )}-${subbrand._id}`;
+
+    // Redirect to the generated URL
+    navigate(url);
+  };
 
   return (
     <section className="bg-white">
@@ -111,39 +131,39 @@ const Home = () => {
           />
         </div>
       </div>
-    
 
- {/** update catgrpry */}
- <div className="container mx-auto px-4 my-2">
-      {/* For small and medium screens (Swiper slider) */}
-      <Swiper
-        spaceBetween={10} // Space between slides
-        slidesPerView={2} // Default for mobile screens (2 slides visible)
-        breakpoints={{
-          640: {
-            slidesPerView: 2, // For small screens (like mobile)
-          },
-          768: {
-            slidesPerView: 4, // For tablets
-          },
-          1024: {
-            slidesPerView: 6, // For medium screens
-          },
-          1280: {
-            slidesPerView: 8, // For large screens
-          },
-        }}
-        loop={true} // Enable infinite loop
-        navigation // Show navigation arrows
-        pagination={{ clickable: true }} // Enable clickable pagination
-        className="mySwiper"
-      />
-  
-      <div className="container mx-auto px-6 my-8"/>
+
+      {/** update brands */}
+      <div className="container mx-auto px-4 my-2">
+        {/* For small and medium screens (Swiper slider) */}
+        <Swiper
+          spaceBetween={10} // Space between slides
+          slidesPerView={2} // Default for mobile screens (2 slides visible)
+          breakpoints={{
+            640: {
+              slidesPerView: 2, // For small screens (like mobile)
+            },
+            768: {
+              slidesPerView: 4, // For tablets
+            },
+            1024: {
+              slidesPerView: 6, // For medium screens
+            },
+            1280: {
+              slidesPerView: 8, // For large screens
+            },
+          }}
+          loop={true} // Enable infinite loop
+          navigation // Show navigation arrows
+          pagination={{ clickable: true }} // Enable clickable pagination
+          className="mySwiper"
+        />
+
+        <div className="container mx-auto px-6 my-8" />
         <div className="home-heading">
           <h2 className="text-2xl font-bold my-8 text-center text-red">Brands</h2>
-        </div>  
-        
+        </div>
+
         {loading ? (
           <p>Loading brands...</p>
         ) : error ? (
@@ -164,57 +184,63 @@ const Home = () => {
             }}
             className="relative"
           >
-            {brands.map((brand) => (
+            {brandData.map((brand) => (
+              console.log("brand", brand),
               <SwiperSlide key={brand._id}>
-                <div className="rounded-lg p-2 shadow hover:shadow-lg transition brands-product">
+                <div
+                  onClick={() => handleRedirectProductBrandListPage(brand._id, brand.name)} // Add this line
+                  className="rounded-lg p-2 shadow hover:shadow-lg transition brands-product cursor-pointer"
+                >
                   <img
                     src={brand.image}
                     alt={brand.name}
                     className="w-full h-32 object-cover rounded-md"
                   />
+                  <h3 className="text-center mt-2 text-lg font-semibold">{brand.name}</h3>
                 </div>
               </SwiperSlide>
+
             ))}
           </Swiper>
         )}
-        
+
       </div>
 
 
-    <div className="container mx-auto px-6 my-4">
-      <div className="home-heading text-center relative">
+      <div className="container mx-auto px-6 my-4">
+        <div className="home-heading text-center relative">
           <h2 className="text-2xl font-bold">Top Selling Products</h2>
-      </div>  
-      {loading ? (
-        <p>Loading top-selling products...</p>
-      ) : error ? (
-        <p className="text-red-600">{error}</p>
-      ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          {topSellingProducts.map((product) => (
-            <div key={product._id} className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col justify-between h-full">
-              <img
-                src={product.image}
-                alt={product.name}
-                className="w-full h-32 object-cover rounded-md mb-4"
-              />
-              <div className="flex-grow">
-                <h3 className="text-sm font-semibold text-gray-800">{product.name}</h3>
-              </div>
-              <div>
-                <p className="text-lg font-bold text-green-600">{product.price}₹</p>
-                <Link
-                  to={`/product/${product._id}`}
-                  className="inline-block bg-red-600 text-white py-2 px-4 rounded-lg mt-2 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
-                >
-                  View Details
-                </Link>
-              </div>
-            </div>
-          ))}
         </div>
-      )}
-    </div>
+        {loading ? (
+          <p>Loading top-selling products...</p>
+        ) : error ? (
+          <p className="text-red-600">{error}</p>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            {topSellingProducts.map((product) => (
+              <div key={product._id} className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col justify-between h-full">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-32 object-cover rounded-md mb-4"
+                />
+                <div className="flex-grow">
+                  <h3 className="text-sm font-semibold text-gray-800">{product.name}</h3>
+                </div>
+                <div>
+                  <p className="text-lg font-bold text-green-600">{product.price}₹</p>
+                  <Link
+                    to={`/product/${product._id}`}
+                    className="inline-block bg-red-600 text-white py-2 px-4 rounded-lg mt-2 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                  >
+                    View Details
+                  </Link>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
 
 
       {/** update catgrpry */}
@@ -264,70 +290,70 @@ const Home = () => {
       </div>
 
       <div class="container mx-auto px-4 bike-parts">
-          <div class="home-heading text-center">
-            <h2>Bike Body Parts</h2>
-            <p>Five star rated latest best selling products</p>
+        <div class="home-heading text-center">
+          <h2>Bike Body Parts</h2>
+          <p>Five star rated latest best selling products</p>
+        </div>
+        <div class="">
+          <div class="grid grid-cols-6 gap-4">
+            <div class="bike-parts-iteam p-3 flex flex-col justify-between">
+              <div class="">
+                <div class="p-3 bg-white rounded-full shadow-lg">
+                  <img src={bannerMobile} className="rounded-full" />
+                  {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                </div>
+                <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
+              </div>
+            </div>
+            <div class="bike-parts-iteam p-3 flex flex-col justify-between">
+              <div class="">
+                <div class="p-3 bg-white rounded-full shadow-lg">
+                  <img src={bannerMobile} className="rounded-full" />
+                  {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                </div>
+                <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
+              </div>
+            </div>
+            <div class="bike-parts-iteam p-3 flex flex-col justify-between">
+              <div class="">
+                <div class="p-3 bg-white rounded-full shadow-lg">
+                  <img src={bannerMobile} className="rounded-full" />
+                  {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                </div>
+                <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
+              </div>
+            </div>
+            <div class="bike-parts-iteam p-3 flex flex-col justify-between">
+              <div class="">
+                <div class="p-3 bg-white rounded-full shadow-lg">
+                  <img src={bannerMobile} className="rounded-full" />
+                  {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                </div>
+                <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
+              </div>
+            </div>
+            <div class="bike-parts-iteam p-3 flex flex-col justify-between">
+              <div class="">
+                <div class="p-3 bg-white rounded-full shadow-lg">
+                  <img src={bannerMobile} className="rounded-full" />
+                  {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                </div>
+                <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
+              </div>
+            </div>
+            <div class="bike-parts-iteam p-3 flex flex-col justify-between">
+              <div class="">
+                <div class="p-3 bg-white rounded-full shadow-lg">
+                  <img src={bannerMobile} className="rounded-full" />
+                  {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
+                </div>
+                <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
+              </div>
+            </div>
           </div>
-          <div class="">
-            <div class="grid grid-cols-6 gap-4">
-                  <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-                    <div class="">
-                      <div class="p-3 bg-white rounded-full shadow-lg">
-                      <img src={bannerMobile} className="rounded-full" />      
-                        {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
-                      </div>
-                      <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
-                    </div>
-                  </div>
-                  <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-                    <div class="">
-                      <div class="p-3 bg-white rounded-full shadow-lg">
-                      <img src={bannerMobile} className="rounded-full" />      
-                        {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
-                      </div>
-                      <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
-                    </div>
-                  </div>
-                  <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-                    <div class="">
-                      <div class="p-3 bg-white rounded-full shadow-lg">
-                      <img src={bannerMobile} className="rounded-full" />      
-                        {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
-                      </div>
-                      <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
-                    </div>
-                  </div>
-                  <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-                    <div class="">
-                      <div class="p-3 bg-white rounded-full shadow-lg">
-                      <img src={bannerMobile} className="rounded-full" />      
-                        {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
-                      </div>
-                      <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
-                    </div>
-                  </div>
-                  <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-                    <div class="">
-                      <div class="p-3 bg-white rounded-full shadow-lg">
-                      <img src={bannerMobile} className="rounded-full" />      
-                        {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
-                      </div>
-                      <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
-                    </div>
-                  </div>
-                  <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-                    <div class="">
-                      <div class="p-3 bg-white rounded-full shadow-lg">
-                      <img src={bannerMobile} className="rounded-full" />      
-                        {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
-                      </div>
-                      <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
-                    </div>
-                  </div>
-              </div> 
-          </div>
-      </div>   
-      
+        </div>
+      </div>
+
       <div className="container mx-auto px-4 my-4 grid grid-cols-1 sm:grid-cols-2 gap-4 descount-offer">
         <div className="bg-red-600 text-white p-6 rounded-lg shadow-lg descount-offer-left">
           <div className="grid grid-cols-3">
@@ -335,36 +361,36 @@ const Home = () => {
               <h2 className="font-semibold text-sm">BIG SALE COUNTDOWN</h2>
               <h3 className="text-3xl font-bold my-2 text-4xl">Hurray Up!</h3>
               <p className="text-xs mb-4 pr-12">
-                Lorem ipsum dolor sit amet consectetur. Netus in pulvinar convallis ut arcu aliquet. grr vida interdum  amet  nunc  in amet adi 
+                Lorem ipsum dolor sit amet consectetur. Netus in pulvinar convallis ut arcu aliquet. grr vida interdum  amet  nunc  in amet adi
               </p>
-            </div>  
+            </div>
             <div className="text-center">
               <span className="text-7xl font-extrabold">75%</span>
               <p className="text-3xl mt-1">Off</p>
               <Link to="" className="mt-4 inline-block btn-view"> View Details </Link>
             </div>
-          </div>  
+          </div>
         </div>
         <div className="text-white p-6 rounded-lg shadow-lg descount-offer-right">
-            <div className="descount-offer-text">
-              <h2 className="font-semibold text-sm">Mega Motorcycle Parts Offer</h2>
-              <h3 className="text-3xl font-bold my-5">Discover New Arrivals</h3>
-              <p className="text-sm mb-4">1000+ Spare parts!</p>
-              {/* <Link
+          <div className="descount-offer-text">
+            <h2 className="font-semibold text-sm">Mega Motorcycle Parts Offer</h2>
+            <h3 className="text-3xl font-bold my-5">Discover New Arrivals</h3>
+            <p className="text-sm mb-4">1000+ Spare parts!</p>
+            {/* <Link
                 to="" className="mt-4 inline-block bg-white text-blue-600 py-2 px-4 rounded-lg">
                 Shop Now
               </Link> */}
-            </div>  
+          </div>
         </div>
-      </div> 
+      </div>
 
 
       <div className="container mx-auto px-4 my-4">
 
         <div className="w-full relative popular-brands">
-        <div class="home-heading text-center">
-          <h2>Our Popular Brands</h2>
-          <p>Trusted by Millions, Loved Worldwide</p>
+          <div class="home-heading text-center">
+            <h2>Our Popular Brands</h2>
+            <p>Trusted by Millions, Loved Worldwide</p>
           </div>
           <Swiper
             modules={[Navigation, Pagination, Autoplay]}
@@ -390,35 +416,35 @@ const Home = () => {
             }}
             className="h-full"
           >
-          <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
-            <div className="">
-              <img src={pb1} className="rounded-full" />  
-            </div>  
-          </SwiperSlide>
             <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
               <div className="">
-                <img src={pb2} className="rounded-full" />  
-              </div>  
+                <img src={pb1} className="rounded-full" />
+              </div>
             </SwiperSlide>
             <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
               <div className="">
-                <img src={pb3} className="rounded-full" />  
-              </div>  
+                <img src={pb2} className="rounded-full" />
+              </div>
             </SwiperSlide>
             <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
               <div className="">
-                <img src={pb4} className="rounded-full" />  
-              </div>  
+                <img src={pb3} className="rounded-full" />
+              </div>
             </SwiperSlide>
             <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
               <div className="">
-                <img src={pb5} className="rounded-full" />  
-              </div>  
+                <img src={pb4} className="rounded-full" />
+              </div>
             </SwiperSlide>
             <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
               <div className="">
-                <img src={pb6} className="rounded-full" />  
-              </div>  
+                <img src={pb5} className="rounded-full" />
+              </div>
+            </SwiperSlide>
+            <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
+              <div className="">
+                <img src={pb6} className="rounded-full" />
+              </div>
             </SwiperSlide>
           </Swiper>
           {/* Custom Navigation Buttons */}
@@ -428,16 +454,24 @@ const Home = () => {
           <button className="swiper-button-next absolute top-1/2 right-4 transform -translate-y-1/2 bg-gray-700 text-white p-2 rounded-full z-10">
             Next
           </button>
-    </div>
+        </div>
       </div>
-      
-      
+
+
 
       {categoryData?.map((c) => (
         <CategoryWiseProductDisplay
           key={c?._id + "CategorywiseProduct"}
           id={c?._id}
           name={c?.name}
+        />
+      ))}
+
+      {brands.map((b) => (
+        <BrandWiseProductDisplay
+          key={b?._id + "BrandwiseProduct"}
+          id={b?._id}
+          name={b?.name}
         />
       ))}
     </section>

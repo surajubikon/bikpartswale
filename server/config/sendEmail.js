@@ -3,7 +3,8 @@ import dotenv from 'dotenv'
 dotenv.config()
 
 if(!process.env.RESEND_API){
-    console.log("Provide RESEND_API in side the .env file")
+    throw new Error("RESEND_API is not defined in the .env file");
+
 }
 
 const resend = new Resend(process.env.RESEND_API);
@@ -11,7 +12,7 @@ const resend = new Resend(process.env.RESEND_API);
 const sendEmail = async({sendTo, subject, html })=>{
     try {
         const { data, error } = await resend.emails.send({
-            from: 'Bikepartswale <testingzamaan@gmail.com>',
+            from: 'Bikepartswale <amaankhan.ubikon@gmail.com>',
             to: sendTo,
             subject: subject,
             html: html,

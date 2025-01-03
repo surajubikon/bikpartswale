@@ -6,7 +6,14 @@ import toast, { Toaster } from 'react-hot-toast';
 import { useEffect } from 'react';
 import fetchUserDetails from './utils/fetchUserDetails';
 import { setUserDetails } from './store/userSlice';
-import { setAllCategory,setAllSubCategory,setLoadingCategory } from './store/productSlice';
+import {
+  setAllCategory,
+  setAllSubCategory,
+  setLoadingCategory,
+  setAllBrands,
+  setAllSubBrands,
+  setLoadingBrands
+} from './store/productSlice';
 import { useDispatch } from 'react-redux';
 import Axios from './utils/Axios';
 import SummaryApi from './common/SummaryApi';
@@ -21,67 +28,101 @@ import './assets/css/style.css';
 function App() {
   const dispatch = useDispatch()
   const location = useLocation()
-  
 
-  const fetchUser = async()=>{
-      const userData = await fetchUserDetails()
-      dispatch(setUserDetails(userData.data))
+
+  const fetchUser = async () => {
+    const userData = await fetchUserDetails()
+    dispatch(setUserDetails(userData.data))
   }
 
-  const fetchCategory = async()=>{
+  const fetchCategory = async () => {
     try {
-        dispatch(setLoadingCategory(true))
-        const response = await Axios({
-            ...SummaryApi.getCategory
-        })
-        const { data : responseData } = response
+      dispatch(setLoadingCategory(true))
+      const response = await Axios({
+        ...SummaryApi.getCategory
+      })
+      const { data: responseData } = response
 
-        if(responseData.success){
-           dispatch(setAllCategory(responseData.data.sort((a, b) => a.name.localeCompare(b.name)))) 
-        }
+      if (responseData.success) {
+        dispatch(setAllCategory(responseData.data.sort((a, b) => a.name.localeCompare(b.name))))
+      }
     } catch (error) {
-        
-    }finally{
+
+    } finally {
       dispatch(setLoadingCategory(false))
     }
   }
 
-  const fetchSubCategory = async()=>{
+  const fetchSubCategory = async () => {
     try {
-        const response = await Axios({
-            ...SummaryApi.getSubCategory
-        })
-        const { data : responseData } = response
+      const response = await Axios({
+        ...SummaryApi.getSubCategory
+      })
+      const { data: responseData } = response
 
-        if(responseData.success){
-           dispatch(setAllSubCategory(responseData.data.sort((a, b) => a.name.localeCompare(b.name)))) 
-        }
+      if (responseData.success) {
+        dispatch(setAllSubCategory(responseData.data.sort((a, b) => a.name.localeCompare(b.name))))
+      }
     } catch (error) {
-        
-    }finally{
+
+    } finally {
     }
   }
 
-  
+  const fetchBrand = async () => {
+    try {
+      dispatch(setLoadingBrands(true))
+      const response = await Axios({
+        ...SummaryApi.getBrands
+      })
+      const { data: responseData } = response
 
-  useEffect(()=>{
+      if (responseData.success) {
+        dispatch(setAllBrands(responseData.data.sort((a, b) => a.name.localeCompare(b.name))))
+      }
+    } catch (error) {
+
+    } finally {
+      dispatch(setLoadingBrands(false))
+    }
+  }
+
+  const fetchSubBrand = async () => {
+    try {
+      const response = await Axios({
+        ...SummaryApi.getSubBrandsByCategoryController
+      })
+      const { data: responseData } = response
+
+      if (responseData.success) {
+        dispatch(setAllSubBrands(responseData.data.sort((a, b) => a.name.localeCompare(b.name))))
+      }
+    } catch (error) {
+
+    } finally {
+    }
+  }
+
+  useEffect(() => {
     fetchUser()
+    fetchBrand()
+    fetchSubBrand()
     fetchCategory()
     fetchSubCategory()
     // fetchCartItem()
-  },[])
+  }, [])
 
   return (
-    <GlobalProvider> 
-      <Header/>
+    <GlobalProvider>
+      <Header />
       <main className='min-h-[78vh]'>
-          <Outlet/>
+        <Outlet />
       </main>
-      <Footer/>
-      <Toaster/>
+      <Footer />
+      <Toaster />
       {
         location.pathname !== '/checkout' && (
-          <CartMobileLink/>
+          <CartMobileLink />
         )
       }
     </GlobalProvider>

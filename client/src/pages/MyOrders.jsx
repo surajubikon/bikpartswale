@@ -35,10 +35,7 @@ const MyOrders = () => {
   };
 
   const saveStatus = async () => {
-    console.log('Updating status:', selectedStatus);
-    console.log('Selected Order ID:', selectedOrder._id); // Log the order ID
     const url = `http://localhost:8080/api/order/${selectedOrder._id}/update-status`;
-    console.log('API URL:', url); // Log the full URL
   
     // Get token from localStorage or cookies
     const token = localStorage.getItem('accessToken'); // Or from cookies if you're using them
@@ -57,7 +54,6 @@ const MyOrders = () => {
   
       if (response.status === 200) {
         const updatedOrder = response.data;
-        console.log('Order updated successfully:', updatedOrder);
         
         // Update the state with the new order status
         setSelectedOrder(updatedOrder);

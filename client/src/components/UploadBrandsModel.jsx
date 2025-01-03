@@ -32,7 +32,6 @@ const UploadBrandModel = ({ close, fetchData }) => {
                 data: data
             });
             const { data: responseData } = response;
-            console.log("Brand Response:", responseData); 
             if (responseData.success) {
                 toast.success(responseData.message);
                 close();

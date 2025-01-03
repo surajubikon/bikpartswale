@@ -20,6 +20,18 @@ const productSchema = new mongoose.Schema({
             ref : 'subCategory'
         }
     ],
+    brand:[
+        {
+            type : mongoose.Schema.ObjectId,
+            ref : 'brand'
+        }
+    ],
+    subBrand:[
+        {
+        type : mongoose.Schema.ObjectId,
+        ref : 'subBrand'
+    }
+    ],
     unit : {
         type : String,
         default : ""
@@ -30,7 +42,7 @@ const productSchema = new mongoose.Schema({
     },
     price : {
         type : Number,
-        defualt : null
+        default : null
     },
     discount : {
         type : Number,
@@ -52,6 +64,7 @@ const productSchema = new mongoose.Schema({
         type: Number,
         default: 0 // Jab naya product banega to sales default 0 hogi
     },
+    
 },{
     timestamps : true
 })
@@ -67,8 +80,6 @@ productSchema.index({
     },
     default_language: 'english, Hinglish' // You can specify the language here (optional)
 });
-
-
 
 const ProductModel = mongoose.model('product',productSchema)
 

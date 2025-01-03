@@ -6,15 +6,13 @@ const uploadImage = async (image) => {
         const formData = new FormData();
         formData.append("image", image);
 
-        console.log("Uploading Image...");
-        console.log("FormData Content:", formData.get("image"));
+
 
         const response = await Axios({
             ...SummaryApi.uploadImage,
             data: formData,
         });
 
-        console.log("Upload Response:", response);
         return response;
     } catch (error) {
         console.error("Image Upload Error:", error);

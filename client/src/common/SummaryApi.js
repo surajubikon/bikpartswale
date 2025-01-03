@@ -89,8 +89,16 @@ const SummaryApi = {
         url: '/api/product/get-product-by-category',
         method: 'post',
     },
+    getProductByBrand: {
+        url: '/api/product/get-product-by-brand',
+        method: 'post',
+    },
     getProductByCategoryAndSubCategory: {
         url: '/api/product/get-pruduct-by-category-and-subcategory',
+        method: 'post',
+    },
+   getProductByBrandAndSubBrand: {
+        url: '/api/product/get-pruduct-by-brand-and-subbrand',
         method: 'post',
     },
     getProductDetails: {
@@ -161,6 +169,35 @@ const SummaryApi = {
     addBrands: {
         url: '/api/brand-models/add-brands',
         method: 'post',
+    },
+    AddBrandsmodelsController: {
+        url: '/api/brand-models/add-brands',
+        method: 'post',
+    },
+    updateBrandsmodelsController: {
+        url: '/api/brand-models/update',
+        method: 'put',
+    },
+    deleteBrandsmodelsController: {
+        url: '/api/brand-models/delete',
+        method: 'delete',
+    },
+    // Sub Brand Routes
+    addSubBrandController : {
+        url: '/api/sub-brand/add-subbrand',
+        method: 'post',
+    },
+    getSubBrandsByCategoryController : {
+        url: '/api/sub-brands/get',
+        method: 'get',
+    },
+    updateSubBrandController : {
+        url: '/api/sub-brand/update',
+        method: 'put',
+    },
+    deleteSubBrandController : {
+        url: '/api/sub-brand/delete',
+        method: 'delete',
     },
     getBrands: {
         url: '/api/brand-models/get',
