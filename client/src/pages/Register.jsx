@@ -170,10 +170,10 @@ const Register = () => {
                         </div>
                     </div>
 
-                    <button disabled={!validValue} className={`${validValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500"} text-white py-2 rounded font-semibold my-3 tracking-wide`}>Register</button>
+                    <button disabled={!validValue} className={`${validValue ? "bg-red-500 hover:bg-red-700" : "bg-gray-500"} text-white py-2 rounded font-semibold my-3 tracking-wide`}>Register</button>
                 </form>
 
-                <p>Already have an account? <Link to={"/login"} className='font-semibold text-green-700 hover:text-green-800'>Login</Link></p>
+                <p>Already have an account? <Link to={"/login"} className='font-semibold text-red-500 hover:text-red-800'>Login</Link></p>
             </div>
 
             {/* OTP Modal */}

@@ -115,7 +115,7 @@ const Login = () => {
                 </form>
 
                 <p>
-                    Don't have account? <Link to={"/register"} className='font-semibold text-green-700 hover:text-green-800'>Register</Link>
+                    Don't have account? <Link to={"/register"} className='font-semibold text-red-500 hover:text-red-800'>Register</Link>
                 </p>
             </div>
         </section>
