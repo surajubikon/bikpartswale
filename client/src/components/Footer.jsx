@@ -109,7 +109,15 @@ const Footer = () => {
 
       {/* Footer Bottom */}
       <div className="border-t border-gray-700 mt-8 py-4 text-center text-gray-400 text-sm">
-        © 2024 All rights reserved. Powered by Ubikon Technologies Pvt Ltd
+        © 2024 All rights reserved. Crafted by &nbsp;
+        <a
+          href="https://www.ubikon.in/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-400 hover:text-blue-600"
+        >
+          Ubikon Technologies Pvt Ltd
+        </a>
       </div>
     </footer>
   );

@@ -15,7 +15,7 @@ const CheckoutPage = () => {
   const { notDiscountTotalPrice, totalPrice, totalQty, fetchCartItem, fetchOrder } = useGlobalContext();
   const [openAddress, setOpenAddress] = useState(false);
   const addressList = useSelector((state) => state.addresses.addressList);
-  const [selectAddress, setSelectAddress] = useState(0);
+  const [selectAddress, setSelectAddress] = useState(null); // Changed to null to indicate no selection initially
   const cartItemsList = useSelector((state) => state.cartItem.cart);
   const navigate = useNavigate();
 
@@ -28,7 +28,18 @@ const CheckoutPage = () => {
       document.body.appendChild(script);
     });
   };
+
+  const validateAddressSelection = () => {
+    if (selectAddress === null || !addressList[selectAddress]) {
+      toast.error('Please select an address before proceeding.');
+      return false;
+    }
+    return true;
+  };
+
   const handleOnlinePayment = async () => {
+    if (!validateAddressSelection()) return;
+
     try {
       const res = await loadRazorpayScript();
       if (!res) {
@@ -36,7 +47,6 @@ const CheckoutPage = () => {
         return;
       }
 
-      // Create Razorpay order
       const createOrderResponse = await Axios({
         ...SummaryApi.createOrder,
         url: '/api/order/create-order',
@@ -93,10 +103,10 @@ const CheckoutPage = () => {
           color: '#3399cc',
         },
         modal: {
-          ondismiss: function() {
-              toast.error('Payment process was cancelled.');
-          }
-      }
+          ondismiss: function () {
+            toast.error('Payment process was cancelled.');
+          },
+        },
       };
 
       const rzp = new window.Razorpay(options);
@@ -107,6 +117,8 @@ const CheckoutPage = () => {
   };
 
   const handleCashOnDelivery = async () => {
+    if (!validateAddressSelection()) return;
+
     try {
       const response = await Axios({
         ...SummaryApi.CashOnDeliveryOrder,
@@ -130,7 +142,6 @@ const CheckoutPage = () => {
     }
   };
 
-
   return (
     <section className='bg-blue-50'>
       <div className='container mx-auto p-4 flex flex-col lg:flex-row w-full gap-5 justify-between'>
@@ -145,7 +156,7 @@ const CheckoutPage = () => {
                       id={`address${index}`}
                       type='radio'
                       value={index}
-                      onChange={(e) => setSelectAddress(e.target.value)}
+                      onChange={(e) => setSelectAddress(Number(e.target.value))}
                       name='address'
                     />
                   </div>

@@ -68,7 +68,7 @@ export const getProductController = async(request,response)=>{
         }
 
         if(!limit){
-            limit = 10
+            limit = 50
         }
 
         const query = search ? {
@@ -115,7 +115,7 @@ export const getProductByCategory = async(request,response)=>{
 
         const product = await ProductModel.find({ 
             category : { $in : id }
-        }).limit(15)
+        }).limit(50)
 
         return response.json({
             message : "category product list",
@@ -179,7 +179,7 @@ export const getProductByCategoryAndSubCategory  = async(request,response)=>{
         }
 
         if(!limit){
-            limit = 10
+            limit = 20
         }
 
         const query = {
@@ -232,7 +232,7 @@ export const getProductByBrandAndSubBrand  = async(request,response)=>{
         }
 
         if(!limit){
-            limit = 10
+            limit = 20
         }
 
         const query = {
@@ -363,11 +363,12 @@ export const searchProduct = async(request,response)=>{
             page = 1
         }
         if(!limit){
-            limit  = 10
+            limit  = 50
         }
 
         const query = search ? {
             $text : {
+
                 $search : search
             }
         } : {}
@@ -375,7 +376,7 @@ export const searchProduct = async(request,response)=>{
         const skip = ( page - 1) * limit
 
         const [data,dataCount] = await Promise.all([
-            ProductModel.find(query).sort({ createdAt  : -1 }).skip(skip).limit(limit).populate('category subCategory brand subBrand'),
+            ProductModel.find(query).sort({ createdAt  : -1 }).skip(skip).limit(limit).populate('category subCategory'),
             ProductModel.countDocuments(query)
         ])
 
@@ -404,7 +405,7 @@ export const getTopSellingProducts = async (request, response) => {
         const { limit } = request.query; // User kitne top products dekhna chahta hai
         const topProducts = await ProductModel.find()
             .sort({ sales: -1 }) // Descending order me sort
-            .limit(parseInt(limit) || 6 ); // Default limit 10 rakho
+            .limit(parseInt(limit) || 10 ); // Default limit 10 rakho
 
         return response.json({
             message: "Top-selling products list",

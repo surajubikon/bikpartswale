@@ -1,32 +1,44 @@
-import { Resend } from 'resend';
-import dotenv from 'dotenv'
-dotenv.config()
+import nodemailer from 'nodemailer';
+import dotenv from 'dotenv';
+dotenv.config();
 
-if(!process.env.RESEND_API){
-    throw new Error("RESEND_API is not defined in the .env file");
-
+// Ensure EMAIL_USER and EMAIL_PASS are defined in the .env file
+if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+    throw new Error("EMAIL_USER or EMAIL_PASS is not defined in the .env file");
 }
 
-const resend = new Resend(process.env.RESEND_API);
+// Create reusable transporter object using the default SMTP transport
+const transporter = nodemailer.createTransport({
+    service: 'gmail', // Gmail service
+    auth: {
+        user: process.env.EMAIL_USER, // Your email address from .env
+        pass: process.env.EMAIL_PASS, // Your email password or app-specific password from .env
+    },
+    tls: {
+        rejectUnauthorized: false, // Ignore certificate validation errors
+    },
+});
 
-const sendEmail = async({sendTo, subject, html })=>{
+// Function to send email
+const sendEmail = async ({ sendTo, subject, html }) => {
+    console.log("Sending email to:", sendTo); // Log the recipient's email for debugging purposes
+
     try {
-        const { data, error } = await resend.emails.send({
-            from: 'Bikepartswale <amaankhan.ubikon@gmail.com>',
-            to: sendTo,
-            subject: subject,
-            html: html,
+        // Send the email
+        const info = await transporter.sendMail({
+            from: `"BikePartsWale" <${process.env.EMAIL_USER}>`, // sender address
+            to: sendTo, // receiver address
+            subject: subject, // subject line
+            html: html, // html body
         });
 
-        if (error) {
-            return console.error({ error });
-        }
-
-        return data
+        // Log the message ID to confirm email sent
+        console.log("Message sent: %s", info.messageId);
+        return info; // Return the email information
     } catch (error) {
-        console.log(error)
+        // Log any errors encountered during the sending process
+        console.error("Error sending email: ", error);
     }
-}
+};
 
-export default sendEmail
-
+export default sendEmail;

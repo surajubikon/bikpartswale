@@ -22,6 +22,6 @@ const subBrandSchema = new mongoose.Schema({
   timestamps: true,
 });
 
-const SubBrand = mongoose.model('subBrands', subBrandSchema);
+const SubBrand = mongoose.model('subBrand', subBrandSchema);
 
 export default SubBrand;

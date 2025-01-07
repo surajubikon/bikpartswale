@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
-import { FaRegEyeSlash } from "react-icons/fa6";
-import { FaRegEye } from "react-icons/fa6";
+import React, { useState } from 'react';
+import { FaRegEyeSlash, FaRegEye } from "react-icons/fa6";
 import toast from 'react-hot-toast';
 import Axios from '../utils/Axios';
 import SummaryApi from '../common/SummaryApi';
@@ -13,67 +12,102 @@ const Register = () => {
         email: "",
         password: "",
         confirmPassword: ""
-    })
-    const [showPassword, setShowPassword] = useState(false)
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-    const navigate = useNavigate()
+    });
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+    const [isModalOpen, setIsModalOpen] = useState(false); // State for modal visibility
+    const [otp, setOtp] = useState("");
+    const [isOtpSent, setIsOtpSent] = useState(false); // State to track if OTP has been sent
+    const [resendCooldown, setResendCooldown] = useState(0); // Resend OTP cooldown
+    const navigate = useNavigate();
 
     const handleChange = (e) => {
-        const { name, value } = e.target
+        const { name, value } = e.target;
+        setData((prev) => ({ ...prev, [name]: value }));
+    };
 
-        setData((preve) => {
-            return {
-                ...preve,
-                [name]: value
-            }
-        })
-    }
+    const validValue = Object.values(data).every((el) => el);
 
-    const valideValue = Object.values(data).every(el => el)
+    const handleSubmit = async (e) => {
+        e.preventDefault();
 
-
-    const handleSubmit = async(e)=>{
-        e.preventDefault()
-
-        if(data.password !== data.confirmPassword){
-            toast.error(
-                "password and confirm password must be same"
-            )
-            return
+        if (data.password !== data.confirmPassword) {
+            toast.error("Password and confirm password must be the same");
+            return;
         }
 
         try {
             const response = await Axios({
                 ...SummaryApi.register,
-                data : data
-            })
-            
-            if(response.data.error){
-                toast.error(response.data.message)
+                data: data
+            });
+
+            if (response.data.error) {
+                toast.error(response.data.message);
             }
 
-            if(response.data.success){
-                toast.success(response.data.message)
-                setData({
-                    name : "",
-                    email : "",
-                    password : "",
-                    confirmPassword : ""
-                })
-                navigate("/login")
+            if (response.data.success) {
+                toast.success(response.data.message);
+                setIsModalOpen(true); // Show the OTP modal after successful registration
+                setIsOtpSent(false); // Reset OTP sent status
             }
-
         } catch (error) {
-            AxiosToastError(error)
+            AxiosToastError(error);
         }
+    };
 
+    // Function to handle OTP send request
+    const handleSendOtp = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.resendOtp, // Assuming you have an endpoint to send OTP
+                data: { email: data.email }
+            });
+            if (response.data.success) {
+                setIsOtpSent(true);
+                setResendCooldown(30); // Set cooldown for 30 seconds
+                toast.success("A new OTP has been sent to your email.");
+                // Decrease cooldown timer every second
+                const cooldownInterval = setInterval(() => {
+                    setResendCooldown((prev) => {
+                        if (prev <= 1) {
+                            clearInterval(cooldownInterval);
+                            return 0;
+                        }
+                        return prev - 1;
+                    });
+                }, 1000);
+            } else {
+                toast.error(response.data.message);
+            }
+        } catch (error) {
+            AxiosToastError(error);
+        }
+    };
 
+    // Function to handle OTP validation
+    const handleOtpSubmit = async () => {
+        try {
+            const response = await Axios({
+                ...SummaryApi.verifyOtp, // Assuming you have an endpoint to verify OTP
+                data: { email: data.email, otp: otp }
+            });
+            if (response.data.success) {
+                toast.success("OTP verified successfully!");
+                navigate("/login");
+                setIsModalOpen(false); // Close modal on success
+            } else {
+                toast.error(response.data.message);
+            }
+        } catch (error) {
+            AxiosToastError(error);
+        }
+    };
 
-    }
     return (
         <section className='w-full container mx-auto px-2'>
             <div className='bg-white my-4 w-full max-w-lg mx-auto rounded p-7'>
-                <p>Welcome toBikeparts</p>
+                <p>Welcome to BikeParts</p>
 
                 <form className='grid gap-4 mt-6' onSubmit={handleSubmit}>
                     <div className='grid gap-1'>
@@ -113,14 +147,8 @@ const Register = () => {
                                 onChange={handleChange}
                                 placeholder='Enter your password'
                             />
-                            <div onClick={() => setShowPassword(preve => !preve)} className='cursor-pointer'>
-                                {
-                                    showPassword ? (
-                                        <FaRegEye />
-                                    ) : (
-                                        <FaRegEyeSlash />
-                                    )
-                                }
+                            <div onClick={() => setShowPassword((prev) => !prev)} className='cursor-pointer'>
+                                {showPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                             </div>
                         </div>
                     </div>
@@ -136,28 +164,49 @@ const Register = () => {
                                 onChange={handleChange}
                                 placeholder='Enter your confirm password'
                             />
-                            <div onClick={() => setShowConfirmPassword(preve => !preve)} className='cursor-pointer'>
-                                {
-                                    showConfirmPassword ? (
-                                        <FaRegEye />
-                                    ) : (
-                                        <FaRegEyeSlash />
-                                    )
-                                }
+                            <div onClick={() => setShowConfirmPassword((prev) => !prev)} className='cursor-pointer'>
+                                {showConfirmPassword ? <FaRegEye /> : <FaRegEyeSlash />}
                             </div>
                         </div>
                     </div>
 
-                    <button disabled={!valideValue} className={` ${valideValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500" }    text-white py-2 rounded font-semibold my-3 tracking-wide`}>Register</button>
-
+                    <button disabled={!validValue} className={`${validValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500"} text-white py-2 rounded font-semibold my-3 tracking-wide`}>Register</button>
                 </form>
 
-                <p>
-                    Already have account ? <Link to={"/login"} className='font-semibold text-green-700 hover:text-green-800'>Login</Link>
-                </p>
+                <p>Already have an account? <Link to={"/login"} className='font-semibold text-green-700 hover:text-green-800'>Login</Link></p>
             </div>
-        </section>
-    )
-}
 
-export default Register
+            {/* OTP Modal */}
+            {isModalOpen && (
+                <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white p-6 rounded relative w-96">
+                        <button onClick={() => setIsModalOpen(false)} className="absolute top-2 right-2 text-xl">&times;</button>
+                        <h2 className="text-center mb-4">Verify Your Email</h2>
+                        <p className="mb-4">We have sent an OTP to your email. Please enter the OTP below to complete the registration.</p>
+                        <input
+                            type="text"
+                            className="w-full p-2 border rounded mb-4"
+                            placeholder="Enter OTP"
+                            value={otp}
+                            onChange={(e) => setOtp(e.target.value)}
+                        />
+                        <div className="flex justify-between">
+                            <button
+                                onClick={handleSendOtp}
+                                disabled={resendCooldown > 0}
+                                className={`${
+                                    resendCooldown > 0 ? "bg-gray-400 cursor-not-allowed" : "bg-blue-500"
+                                } text-white py-2 px-4 rounded`}
+                            >
+                                {resendCooldown > 0 ? `Wait ${resendCooldown}s` : "Resend OTP"}
+                            </button>
+                            <button onClick={handleOtpSubmit} className="bg-green-500 text-white py-2 px-4 rounded">Submit</button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </section>
+    );
+};
+
+export default Register;

@@ -188,15 +188,15 @@ const Home = () => {
               console.log("brand", brand),
               <SwiperSlide key={brand._id}>
                 <div
-                  onClick={() => handleRedirectProductBrandListPage(brand._id, brand.name)} // Add this line
+                  onClick={() => handleRedirectProductBrandListPage(brand._id)} // Add this line
                   className="rounded-lg p-2 shadow hover:shadow-lg transition brands-product cursor-pointer"
                 >
                   <img
                     src={brand.image}
-                    alt={brand.name}
+                  
                     className="w-full h-32 object-cover rounded-md"
                   />
-                  <h3 className="text-center mt-2 text-lg font-semibold">{brand.name}</h3>
+                 
                 </div>
               </SwiperSlide>
 
@@ -220,7 +220,7 @@ const Home = () => {
             {topSellingProducts.map((product) => (
               <div key={product._id} className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col justify-between h-full">
                 <img
-                  src={product.image}
+                  src={product.image[0]}
                   alt={product.name}
                   className="w-full h-32 object-cover rounded-md mb-4"
                 />
@@ -244,50 +244,50 @@ const Home = () => {
 
 
       {/** update catgrpry */}
-      <div className="container mx-auto px-4 brake-clutch">
-        <div className="home-heading text-center">
-          <h2>Brake & Clutch</h2>
-          <p>Five star rated latest best selling products</p>
-        </div>
-        {/* For small and medium screens (Swiper slider) */}
-        <div className="">
+  <div className="container mx-auto px-4 brake-clutch">
+  <div className="home-heading text-center">
+    <h2>Parts & Spare</h2>
+    <p>Five star rated latest best selling products</p>
+  </div>
 
-          <div class="grid grid-cols-5 gap-10">
-            {loadingCategory ? (
-              new Array(12).fill(null).map((_, index) => (
-                <div>
-                  key={`loadingcategory-${index}`}
-                  className="bg-white rounded-lg p-4 min-h-36 grid gap-2 shadow-lg animate-pulse"
+  {/* For small and medium screens (Swiper slider) */}
+  <div className="">
 
-                  <div className="bg-blue-100 min-h-24 rounded"></div>
-                  <div className="bg-blue-100 h-8 rounded"></div>
-                </div>
-              ))
-            ) : (
-              categoryData.map((cat) => (
-                <div
-                  key={`displayCategory-${cat._id}`}
-                  className="w-full hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer"
-                >
-                  <div onClick={() => handleRedirectProductListpage(cat._id, cat.name)} // Updated function call
-                    className="brake-clutch-iteam bg-gray-100 rounded-lg shadow-md p-3 flex flex-col justify-between">
-                    <div className="">
-                      <div className="p-3 bg-white">
-                        <img
-                          src={cat.image}
-                          className=""
-                          alt={cat.name}
-                        />
-                      </div>
-                      <h3 className="text-lg font-semibold text-center mt-3">{cat.name}</h3>
-                    </div>
-                  </div>
-                </div>
-              ))
-            )}
+    {/* Grid layout for different screen sizes */}
+    <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10">
+      {loadingCategory ? (
+        new Array(12).fill(null).map((_, index) => (
+          <div key={`loadingcategory-${index}`} className="bg-white rounded-lg p-4 min-h-36 grid gap-2 shadow-lg animate-pulse">
+            <div className="bg-blue-100 min-h-24 rounded"></div>
+            <div className="bg-blue-100 h-8 rounded"></div>
           </div>
-        </div>
-      </div>
+        ))
+      ) : (
+        categoryData.map((cat) => (
+          <div
+            key={`displayCategory-${cat._id}`}
+            className="w-full flex flex-col hover:scale-105 hover:shadow-2xl transition-all duration-300 cursor-pointer"
+          >
+            <div onClick={() => handleRedirectProductListpage(cat._id, cat.name)} className="brake-clutch-iteam bg-gray-100 rounded-lg shadow-md p-3 flex flex-col justify-between min-h-[300px]">
+              <div className="flex flex-col h-full">
+                <div className="p-3 bg-white flex-grow">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-auto object-cover rounded"
+                  />
+                </div>
+                <h3 className="text-lg font-semibold text-center mt-3">{cat.name}</h3>
+              </div>
+            </div>
+          </div>
+        ))
+      )}
+    </div>
+  </div>
+</div>
+
+
 
       <div class="container mx-auto px-4 bike-parts">
         <div class="home-heading text-center">
@@ -386,76 +386,77 @@ const Home = () => {
 
 
       <div className="container mx-auto px-4 my-4">
-
-        <div className="w-full relative popular-brands">
-          <div class="home-heading text-center">
-            <h2>Our Popular Brands</h2>
-            <p>Trusted by Millions, Loved Worldwide</p>
-          </div>
-          <Swiper
-            modules={[Navigation, Pagination, Autoplay]}
-            navigation={{
-              nextEl: '.swiper-button-next',
-              prevEl: '.swiper-button-prev',
-            }}
-            pagination={{ clickable: true }}
-            autoplay={{ delay: 3000, disableOnInteraction: false }}
-            loop breakpoints={{
-              640: {
-                slidesPerView: 2, // For small screens (like mobile)
-              },
-              768: {
-                slidesPerView: 4, // For tablets
-              },
-              1024: {
-                slidesPerView: 6, // For medium screens
-              },
-              1280: {
-                slidesPerView: 6, // For large screens
-              },
-            }}
-            className="h-full"
-          >
-            <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
-              <div className="">
-                <img src={pb1} className="rounded-full" />
-              </div>
-            </SwiperSlide>
-            <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
-              <div className="">
-                <img src={pb2} className="rounded-full" />
-              </div>
-            </SwiperSlide>
-            <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
-              <div className="">
-                <img src={pb3} className="rounded-full" />
-              </div>
-            </SwiperSlide>
-            <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
-              <div className="">
-                <img src={pb4} className="rounded-full" />
-              </div>
-            </SwiperSlide>
-            <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
-              <div className="">
-                <img src={pb5} className="rounded-full" />
-              </div>
-            </SwiperSlide>
-            <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
-              <div className="">
-                <img src={pb6} className="rounded-full" />
-              </div>
-            </SwiperSlide>
-          </Swiper>
-          {/* Custom Navigation Buttons */}
-          <button className="swiper-button-prev absolute top-1/2 left-4 transform -translate-y-1/2 bg-gray-700 text-white p-2 rounded-full z-10">
-            Prev
-          </button>
-          <button className="swiper-button-next absolute top-1/2 right-4 transform -translate-y-1/2 bg-gray-700 text-white p-2 rounded-full z-10">
-            Next
-          </button>
+  <div className="w-full relative popular-brands">
+    <div className="home-heading text-center">
+      <h2>Our Popular Brands</h2>
+      <p>Trusted by Millions, Loved Worldwide</p>
+    </div>
+    <Swiper
+      modules={[Navigation, Pagination, Autoplay]}
+      navigation={{
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      }}
+      pagination={{ clickable: true }}
+      autoplay={{ delay: 3000, disableOnInteraction: false }}
+      loop
+      breakpoints={{
+        640: {
+          slidesPerView: 2, // 2 slides per view on mobile
+        },
+        768: {
+          slidesPerView: 3, // 3 slides per view on tablets
+        },
+        1024: {
+          slidesPerView: 4, // 4 slides per view on medium screens
+        },
+        1280: {
+          slidesPerView: 6, // 6 slides per view on larger screens
+        },
+      }}
+      className="h-full"
+    >
+      <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
+        <div>
+          <img src={pb1} className="rounded-full" alt="Brand 1" />
         </div>
-      </div>
+      </SwiperSlide>
+      <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
+        <div>
+          <img src={pb2} className="rounded-full" alt="Brand 2" />
+        </div>
+      </SwiperSlide>
+      <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
+        <div>
+          <img src={pb3} className="rounded-full" alt="Brand 3" />
+        </div>
+      </SwiperSlide>
+      <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
+        <div>
+          <img src={pb4} className="rounded-full" alt="Brand 4" />
+        </div>
+      </SwiperSlide>
+      <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
+        <div>
+          <img src={pb5} className="rounded-full" alt="Brand 5" />
+        </div>
+      </SwiperSlide>
+      <SwiperSlide className="flex items-center justify-center text-white p-3 popular-brands-cell">
+        <div>
+          <img src={pb6} className="rounded-full" alt="Brand 6" />
+        </div>
+      </SwiperSlide>
+    </Swiper>
+
+    {/* Custom Navigation Buttons */}
+    <button className="swiper-button-prev absolute top-1/2 left-4 transform -translate-y-1/2 bg-gray-700 text-white p-2 rounded-full z-10">
+      Prev
+    </button>
+    <button className="swiper-button-next absolute top-1/2 right-4 transform -translate-y-1/2 bg-gray-700 text-white p-2 rounded-full z-10">
+      Next
+    </button>
+  </div>
+</div>
 
 
 
@@ -467,13 +468,13 @@ const Home = () => {
         />
       ))}
 
-      {brands.map((b) => (
+      {/* {brands.map((b) => (
         <BrandWiseProductDisplay
           key={b?._id + "BrandwiseProduct"}
           id={b?._id}
           name={b?.name}
         />
-      ))}
+      ))} */}
     </section>
   );
 };

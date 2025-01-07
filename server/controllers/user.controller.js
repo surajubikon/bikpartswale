@@ -9,67 +9,82 @@ import generatedOtp from '../utils/generatedOtp.js'
 import forgotPasswordTemplate from '../utils/forgotPasswordTemplate.js'
 import jwt from 'jsonwebtoken'
 
-export async function registerUserController(request,response){
+export async function registerUserController(request, response) {
     try {
-        const { name, email , password } = request.body
+        const { name, email, password } = request.body;
 
-        if(!name || !email || !password){
+        // Check if all required fields are provided
+        if (!name || !email || !password) {
             return response.status(400).json({
-                message : "provide email, name, password",
-                error : true,
-                success : false
-            })
+                message: "Please provide email, name, and password",
+                error: true,
+                success: false
+            });
         }
 
-        const user = await UserModel.findOne({ email })
+        // Check if the email is already registered
+        const existingUser = await UserModel.findOne({ email });
 
-        if(user){
-            return response.json({
-                message : "Already register email",
-                error : true,
-                success : false
-            })
+        if (existingUser) {
+            return response.status(400).json({
+                message: "Email is already registered",
+                error: true,
+                success: false
+            });
         }
 
-        const salt = await bcryptjs.genSalt(10)
-        const hashPassword = await bcryptjs.hash(password,salt)
+        // Hash the password
+        const salt = await bcryptjs.genSalt(10);
+        const hashPassword = await bcryptjs.hash(password, salt);
 
+        // Create new user payload
         const payload = {
             name,
             email,
-            password : hashPassword
-        }
+            password: hashPassword
+        };
 
-        const newUser = new UserModel(payload)
-        const save = await newUser.save()
+        // Create a new user instance
+        const newUser = new UserModel(payload);
+        const savedUser = await newUser.save();
 
-        const VerifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?code=${save?._id}`
+        // Generate OTP for email verification
+        const otp = generatedOtp();  // Use a utility function to generate OTP
+        console.log(`Generated OTP for ${name} (email: ${email}): ${otp}`);
 
-        const verifyEmail = await sendEmail({
-            sendTo : email,
-            subject : "Verify email fromBikeparts",
-            html : verifyEmailTemplate({
+        // Save OTP to the user with expiry
+        savedUser.otp = otp;
+        savedUser.expiry = new Date(Date.now() + 60 * 60 * 1000);  // OTP valid for 1 hour
+        await savedUser.save();
+
+        // Send verification email
+        const verifyEmailUrl = `${process.env.FRONTEND_URL}/verify-email?code=${savedUser._id}`;
+
+        await sendEmail({
+            sendTo: email,
+            subject: "Verify your email - BikePartsWala",
+            html: verifyEmailTemplate({
                 name,
-                url : VerifyEmailUrl
+        url: verifyEmailUrl,
+        otp: otp // Ensure OTP is passed here
             })
-        })
+        });
 
         return response.json({
-            message : "User register successfully",
-            error : false,
-            success : true,
-            data : save
-        })
+            message: "User registered successfully. Please check your email to verify.",
+            error: false,
+            success: true,
+            data: savedUser
+        });
 
     } catch (error) {
         return response.status(500).json({
-            message : error.message || error,
-            error : true,
-            success : false
-        })
+            message: error.message || 'Internal server error',
+            error: true,
+            success: false
+        });
     }
 }
-
 export async function verifyEmailController(request,response){
     try {
         const { code } = request.body
@@ -116,7 +131,8 @@ export async function loginController(request,response){
             })
         }
 
-        const user = await UserModel.findOne({ email })
+        const user = await UserModel.findOne({ email , verify_email : true})
+
 
         if(!user){
             return response.status(400).json({
@@ -515,5 +531,154 @@ export async function userDetails(request,response){
             error : true,
             success : false
         })
+    }
+}
+
+// // API to verify OTP
+// export const verifyOtp = (req, res) => {
+//     const otpStore={}
+//     const { email, otp } = req.body;
+  
+//     // Check if OTP exists in the store
+//     const otpData = otpStore[email];
+  
+//     if (!otpData) {
+//       return res.status(400).json({
+//         success: false,
+//         message: 'No OTP request found for this email.'
+//       });
+//     }
+  
+//     // Check if OTP is expired
+//     if (Date.now() > otpData.expiresAt) {
+//       delete otpStore[email]; // Remove expired OTP
+//       return res.status(400).json({
+//         success: false,
+//         message: 'OTP has expired. Please request a new OTP.'
+//       });
+//     }
+  
+//     // Check if the OTP matches
+//     if (otpData.otp === parseInt(otp)) {
+//       delete otpStore[email]; // OTP is valid, so delete it from store
+//       return res.json({
+//         success: true,
+//         message: 'OTP verified successfully!'
+//       });
+//     }
+  
+//     return res.status(400).json({
+//       success: false,
+//       message: 'Invalid OTP. Please try again.'
+//     });
+//   };
+
+export async function verifyOtp(req, res) {
+    try {
+      const { email, otp } = req.body;
+  
+      // Validate input
+      if (!email || !otp) {
+        return res.status(400).json({
+          success: false,
+          message: 'Email and OTP are required',
+        });
+      }
+  
+      // Find user by email and select OTP fields
+      const user = await UserModel.findOne({ email }).select('otp otpExpiresAt verify_email');
+  
+      if (!user) {
+        return res.status(404).json({
+          success: false,
+          message: 'User not found',
+        });
+      }
+  
+      // Check if OTP matches
+      if (user.otp !== otp) {
+        return res.status(400).json({
+          success: false,
+          message: 'Invalid OTP. Please try again.',
+        });
+      }
+  
+      // Check if OTP has expired
+      if (Date.now() > user.otpExpiresAt) {
+        return res.status(400).json({
+          success: false,
+          message: 'OTP has expired. Please request a new OTP.',
+        });
+      }
+  
+      // Update `verify_email` and clear OTP-related fields
+      await UserModel.findByIdAndUpdate(user._id, {
+        verify_email: true,
+        otp: null,
+        otpExpiresAt: null,
+      });
+  
+      // Respond to client
+      return res.json({
+        success: true,
+        message: 'OTP verified successfully! Email has been verified.',
+      });
+  
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        success: false,
+        message: 'An error occurred while verifying OTP. Please try again later.',
+      });
+    }
+  }
+  
+
+  export async function resendOtp(req, res) {
+    try {
+        const { email } = req.body;
+
+        // Check if user exists
+        const user = await UserModel.findOne({ email });
+
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: 'User not found',
+            });
+        }
+
+        // Generate a new OTP
+        const newOtp = Math.floor(100000 + Math.random() * 900000); // Generate a 6-digit OTP
+        const otpExpiresAt = Date.now() + 5 * 60 * 1000; // Set expiry to 5 minutes from now
+
+        // Update user with new OTP and expiry time
+        user.otp = newOtp;
+        user.otpExpiresAt = otpExpiresAt;
+        await user.save();
+
+        // Send OTP via email
+        const subject = 'Your OTP Code';
+        const message = `Your OTP code is ${newOtp}. It is valid for 5 minutes.`;
+
+        await sendEmail({
+            sendTo: email,
+            subject: "New OTP  - BikePartsWala",
+            html: verifyEmailTemplate({
+                name: user.name, // Pass user's name here
+                url: `${process.env.CLIENT_URL}/verify-email`, // Include a verification URL if needed
+                otp: newOtp, // Pass the new OTP
+            }),
+        });
+        res.json({
+            success: true,
+            message: 'New OTP sent successfully!',
+        });
+    } catch (error) {
+        console.error('Resend OTP Error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error occurred while resending OTP. Please try again later.',
+        });
     }
 }

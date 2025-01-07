@@ -101,6 +101,24 @@ const UploadProduct = () => {
         }
       })
   }
+  const handleRemoveBrand = async(index)=>{
+    data.brand.splice(index,1)
+    setData((preve)=>{
+      return{
+        ...preve
+      }
+    })
+}
+
+const handleRemovesubBrand = async(index)=>{
+  data.subBrand.splice(index,1)
+  setData((preve)=>{
+    return{
+      ...preve
+    }
+  })
+}
+
 
   const handleAddField = ()=>{
     setData((preve)=>{
@@ -357,7 +375,7 @@ const UploadProduct = () => {
                           return(
                             <div key={b._id+index+"productsection"} className='text-sm flex items-center gap-1 bg-blue-50 mt-2'>
                               <p>{b.name}</p>
-                              <div className='hover:text-red-500 cursor-pointer' onClick={()=>handleRemoveCategory(index)}>
+                              <div className='hover:text-red-500 cursor-pointer' onClick={()=>handleRemoveBrand(index)}>
                                 <IoClose size={20}/>
                               </div>
                             </div>
@@ -401,7 +419,7 @@ const UploadProduct = () => {
                           return(
                             <div key={b._id+index+"productsection"} className='text-sm flex items-center gap-1 bg-blue-50 mt-2'>
                               <p>{b.name}</p>
-                              <div className='hover:text-red-500 cursor-pointer' onClick={()=>handleRemoveSubCategory(index)}>
+                              <div className='hover:text-red-500 cursor-pointer' onClick={()=>handleRemovesubBrand(index)}>
                                 <IoClose size={20}/>
                               </div>
                             </div>

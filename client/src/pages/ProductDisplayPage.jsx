@@ -8,7 +8,7 @@ import { DisplayPriceInRupees } from '../utils/DisplayPriceInRupees';
 import Divider from '../components/Divider';
 import image1 from '../assets/minute_delivery.png';
 import image2 from '../assets/Best_Prices_Offers.png';
-import image3 from '../assets/Wide_Assortment.png';
+import image3 from '../assets/imagelogo.jpg';
 import { pricewithDiscount } from '../utils/PriceWithDiscount';
 import AddToCartButton from '../components/AddToCartButton';
 
@@ -254,7 +254,7 @@ const ProductDisplayPage = () => {
             <div className='text-sm'>
               <div className='font-semibold'>Wide Assortment</div>
               <p>
-                Choose from 5000+ products across food personal care, household
+                Choose from 2000+ products across Parts and Spare for Bike,
                 & other categories.
               </p>
             </div>

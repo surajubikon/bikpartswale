@@ -78,7 +78,7 @@ productSchema.index({
         name: 10,
         description: 5
     },
-    default_language: 'english, Hinglish' // You can specify the language here (optional)
+    default_language: 'english' // You can specify the language here (optional)
 });
 
 const ProductModel = mongoose.model('product',productSchema)
