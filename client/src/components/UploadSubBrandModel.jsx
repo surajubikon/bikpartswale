@@ -76,9 +76,13 @@ const UploadSubBrandModel = ({ close, fetchData }) => {
     
         try {
             const response = await Axios.post(
-                "http://localhost:8080/api/sub-brands/add-subbrand",
+                "http://localhost:5000/api/sub-brands/add-subbrand",
                 payload
             );
+            // const response = await Axios.post(
+            //     "http://localhost:5000/api/sub-brands/add-subbrand",
+            //     payload
+            // );
             const { data: responseData } = response;
     
             if (responseData.success) {

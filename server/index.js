@@ -20,7 +20,8 @@ import brandsmodelsRouter from  './route/brandsmodel.router.js'
 const app = express()
 app.use(cors({
     credentials : true,
-    origin : process.env.FRONTEND_URL
+    origin : process.env.FRONTEND_URL,
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Accept'],
 }))
 app.use(express.json())
 app.use(cookieParser())
@@ -29,7 +30,8 @@ app.use(helmet({
     crossOriginResourcePolicy : false
 }))
 
-const PORT = 8080 || process.env.PORT 
+const PORT = process.env.PORT || 5000;
+    
 
 app.get("/",(request,response)=>{
     ///server to client
@@ -50,7 +52,7 @@ app.use("/api/address",addressRouter)
 app.use('/api/order',orderRouter)
 connectDB().then(()=>{
     app.listen(PORT,()=>{
-        console.log("Server is running",PORT)
+        console.log("Server is running at live ",PORT)
     })
 })
 

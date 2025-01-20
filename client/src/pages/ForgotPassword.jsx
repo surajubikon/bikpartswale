@@ -60,32 +60,44 @@ const ForgotPassword = () => {
     }
 
     return (
-        <section className='w-full container mx-auto px-2'>
-            <div className='bg-white my-4 w-full max-w-lg mx-auto rounded p-7'>
-                <p className='font-semibold text-lg'>Forgot Password </p>
-                <form className='grid gap-4 py-4' onSubmit={handleSubmit}>
-                    <div className='grid gap-1'>
-                        <label htmlFor='email'>Email :</label>
-                        <input
-                            type='email'
-                            id='email'
-                            className='bg-blue-50 p-2 border rounded outline-none focus:border-primary-200'
-                            name='email'
-                            value={data.email}
-                            onChange={handleChange}
-                            placeholder='Enter your email'
-                        />
-                    </div>
-             
-                    <button disabled={!valideValue} className={` ${valideValue ? "bg-green-800 hover:bg-green-700" : "bg-gray-500" }    text-white py-2 rounded font-semibold my-3 tracking-wide`}>Send Otp</button>
-
-                </form>
-
-                <p>
-                    Already have account? <Link to={"/login"} className='font-semibold text-green-700 hover:text-green-800'>Login</Link>
-                </p>
+      <section className='w-full container mx-auto px-4 sm:px-6 lg:px-8'>
+        <div className='bg-white my-6 w-full max-w-md sm:max-w-lg lg:max-w-xl mx-auto rounded-lg shadow-lg p-6 sm:p-8'>
+          <p className='font-semibold text-lg text-gray-800'>Forgot Password</p>
+          <form className='grid gap-6 py-4' onSubmit={handleSubmit}>
+            <div className='grid gap-2'>
+              <label htmlFor='email' className='text-sm font-medium text-gray-700'>Email:</label>
+              <input
+                type='email'
+                id='email'
+                className='bg-blue-50 p-3 border border-gray-300 rounded-md outline-none focus:border-blue-500 focus:ring focus:ring-blue-200 transition'
+                name='email'
+                value={data.email}
+                onChange={handleChange}
+                placeholder='Enter your email'
+              />
             </div>
-        </section>
+      
+            <button
+              disabled={!valideValue}
+              className={`w-full py-3 rounded-md font-semibold tracking-wide text-white transition ${
+                valideValue
+                  ? "bg-red-600 hover:bg-red-700 focus:ring focus:ring-green-200"
+                  : "bg-gray-400 cursor-not-allowed"
+              }`}
+            >
+              Send OTP
+            </button>
+          </form>
+      
+          <p className='mt-4 text-center text-sm text-gray-600'>
+            Already have an account?{' '}
+            <Link to={'/login'} className='font-medium text-red-500 hover:text-red-700 transition'>
+              Login
+            </Link>
+          </p>
+        </div>
+      </section>
+      
     )
 }
 

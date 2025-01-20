@@ -33,20 +33,28 @@ const Home = () => {
   const categoryData = useSelector((state) => state.product.allCategory);
   const subCategoryData = useSelector((state) => state.product.allSubCategory);
   const brandData = useSelector((state) => state.product.allBrands);
+ 
   const subBrandData = useSelector((state) => state.product.allSubBrands);
   const navigate = useNavigate();
   const [brands, setBrands] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [topSellingProducts, setTopSellingProducts] = useState([]);
-
+  const [newDeal, setNewDeal]=useState([]);
+  
 
   useEffect(() => {
+    
     const fetchBrands = async () => {
+      
       try {
         const response = await axios.get(
-          "http://localhost:8080/api/brand-models/get"
+          "http://localhost:5000/api/brand-models/get"
         );
+        // const response = await axios.get(
+        //   "http://localhost:5000/api/brand-models/get"
+        // );
+        
         setBrands(response.data?.data || []);
         setLoading(false);
       } catch (err) {
@@ -58,10 +66,25 @@ const Home = () => {
     const fetchTopSellingProducts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/api/product/top-selling-products"
+          "http://localhost:5000/api/product/top-selling-products"
 
         );
+        
         setTopSellingProducts(response.data?.data || []);
+      } catch (err) {
+        console.error("Error fetching top-selling products:", err);
+        setError("Failed to load top-selling products");
+      }
+    };
+    const fetchNewdeal = async () => {
+      
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/product/new-deals"
+
+        );
+        
+        setNewDeal(response.data?.data || []);
       } catch (err) {
         console.error("Error fetching top-selling products:", err);
         setError("Failed to load top-selling products");
@@ -69,6 +92,7 @@ const Home = () => {
     };
 
     fetchBrands();
+    fetchNewdeal();
     fetchTopSellingProducts();
   }, []);
 
@@ -95,6 +119,7 @@ const Home = () => {
   };
 
   const handleRedirectProductBrandListPage = (brandId, brandName) => {
+    
     const subbrand = subBrandData.find((sub) =>
       Array.isArray(sub.brand) && sub.brand.some((b) => b._id === brandId)
     );
@@ -185,10 +210,10 @@ const Home = () => {
             className="relative"
           >
             {brandData.map((brand) => (
-              console.log("brand", brand),
+             
               <SwiperSlide key={brand._id}>
                 <div
-                  onClick={() => handleRedirectProductBrandListPage(brand._id)} // Add this line
+                  onClick={() => handleRedirectProductBrandListPage(brand._id, brand.name)} // Add this line
                   className="rounded-lg p-2 shadow hover:shadow-lg transition brands-product cursor-pointer"
                 >
                   <img
@@ -241,6 +266,55 @@ const Home = () => {
           </div>
         )}
       </div>
+
+ <div className="container mx-auto px-6 my-4">
+  <div className="home-heading text-center relative">
+    <h2 className="text-2xl font-bold">Top New Deals</h2>
+  </div>
+
+  {loading ? (
+    <p>Loading top new deals products...</p>
+  ) : error ? (
+    <p className="text-red-600">{error}</p>
+  ) : (
+    <>
+      {console.log("New Deals Data:", newDeal)}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        {newDeal?.map((product, index) => {
+          console.log(`Product`, product.product.image[0]);
+          {console.log("New price Data:", product.product.name)}
+          return (
+            <div
+              key={product._id}
+              className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col justify-between h-full"
+            >
+              <img
+                src={product?.product?.image[0] || ""}
+                alt={product.name || "Product Image"}
+                className="w-full h-32 object-cover rounded-md mb-4"
+              />
+              <div className="flex-grow">
+                <h3 className="text-sm font-semibold text-gray-800">{product?.product?.name}</h3>
+              </div>
+              <div>
+            
+                <p className="text-lg font-bold text-green-600">{product?.product?.price}₹</p>
+                <Link
+                  to={`/product/${product?.product._id}`}
+
+                  className="inline-block bg-red-600 text-white py-2 px-4 rounded-lg mt-2 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                >
+                  View Details
+                </Link>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  )}
+</div>
+
 
 
       {/** update catgrpry */}

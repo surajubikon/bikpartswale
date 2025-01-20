@@ -35,7 +35,8 @@ const MyOrders = () => {
   };
 
   const saveStatus = async () => {
-    const url = `http://localhost:8080/api/order/${selectedOrder._id}/update-status`;
+    // const url = `http://localhost:5000/api/order/${selectedOrder._id}/update-status`;
+    const url = `http://localhost:5000/api/order/${selectedOrder._id}/update-status`;
   
     // Get token from localStorage or cookies
     const token = localStorage.getItem('accessToken'); // Or from cookies if you're using them

@@ -22,6 +22,7 @@ const UploadProduct = () => {
     brand: [], // Initialize as an array
     subBrand: [], // Initialize as an array
     unit: "",
+    stock: 0,
     stock: "",
     price: "",
     discount: "",
@@ -39,7 +40,7 @@ const UploadProduct = () => {
   const [selectSubCategory,setSelectSubCategory] = useState("")
   const [selectSubBrand,setSelectSubBrand] = useState("")
   const allSubCategory = useSelector(state => state.product.allSubCategory)
-
+  const [soldOut, setSoldOut] = useState(false);
   const [openAddField,setOpenAddField] = useState(false)
   const [fieldName,setFieldName] = useState("")
 

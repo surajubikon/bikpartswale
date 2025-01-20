@@ -62,10 +62,15 @@ const EditSubBrand = ({ close, data, fetchData }) => {
 
         try {
             const response = await Axios({
-                url: "http://localhost:8080/api/sub-brands/update",
+                url: "http://localhost:5000/api/sub-brands/update",
                 method: "PUT",
                 data: subBrandData
             });
+            // const response = await Axios({
+            //     url: "http://localhost:5000/api/sub-brands/update",
+            //     method: "PUT",
+            //     data: subBrandData
+            // });
 
             const { data: responseData } = response;
 

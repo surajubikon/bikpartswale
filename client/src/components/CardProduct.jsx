@@ -15,9 +15,12 @@ const CardProduct = ({ data }) => {
   useEffect(() => {
     const fetchRatings = async () => {
       try {
-        const response = await Axios.get('http://localhost:8080/api/product/get-rating-comments', {
+        const response = await Axios.get('http://localhost:5000/api/product/get-rating-comments', {
           params: { productId: data._id }
         });
+        // const response = await Axios.get('http://localhost:5000/api/product/get-rating-comments', {
+        //   params: { productId: data._id }
+        // });
         const { data: responseData } = response;
         if (responseData.success) {
           const ratings = responseData.data;
@@ -43,9 +46,7 @@ const CardProduct = ({ data }) => {
         />
       </div>
       <div className='flex items-center gap-1'>
-        <div className='rounded text-xs w-fit p-[1px] px-2 text-green-600 bg-green-50'>
-          10 min
-        </div>
+        
         <div>
           {Boolean(data.discount) && (
             <p className='text-green-600 bg-green-100 px-2 w-fit text-xs rounded-full'>{data.discount}% discount</p>
@@ -56,7 +57,7 @@ const CardProduct = ({ data }) => {
         {data.name}
       </div>
       <div className='w-fit gap-1 px-2 lg:px-0 text-sm lg:text-base'>
-        {data.unit}
+        {data.stock}
       </div>
       <div className='px-2 lg:px-0 flex items-center justify-between gap-1 lg:gap-3 text-sm lg:text-base'>
         <div className='flex items-center gap-1'>

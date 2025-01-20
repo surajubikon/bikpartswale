@@ -36,9 +36,9 @@ const productSchema = new mongoose.Schema({
         type : String,
         default : ""
     },
-    stock : {
-        type : Number,
-        default : null
+    stock: {
+        type: Number,
+        default: 0  // Changed to default to 0 to avoid null values
     },
     price : {
         type : Number,
@@ -62,9 +62,13 @@ const productSchema = new mongoose.Schema({
     },
     sales: {
         type: Number,
-        default: 0 // Jab naya product banega to sales default 0 hogi
+        default: 0 // Default sales to 0 when a new product is created
     },
-    
+    hasDeal: {
+        type: Boolean,
+        default: false
+    },
+    soldOut: { type: Boolean, default: false },
 },{
     timestamps : true
 })

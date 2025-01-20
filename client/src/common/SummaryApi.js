@@ -1,5 +1,6 @@
-export const baseURL = "http://localhost:8080"
+export const baseURL = "http://localhost:5000"
 
+// export const baseURL = "http://localhost:5000"
 const SummaryApi = {
     register: {
         url: '/api/user/register',
@@ -9,6 +10,32 @@ const SummaryApi = {
         url: '/api/user/login',
         method: 'post',
     },
+    getAllProducts:{
+        url:'/api/product/get-all-product',
+        method:'get',
+    },
+
+    getNewDealsController: {
+        url: '/api/product/new-deals', // Replace with your actual endpoint URL
+        method: 'get',
+    },
+    getSingleNewDealController: {
+        url: '/api/product/singledeal', // Replace with your actual endpoint URL
+        method: 'get',
+        },
+        createnewdealController:{
+            url:'/api/product/create/new-deals',
+            method:'post',
+        },
+        updateNewDealController:{
+            url:'/api/product/update',
+            method:'put',
+        },
+        deleteNewDealController:{
+            url:'/api/product/newdeal/delete',
+            method:'delete',
+        },
+
     verifyOtp: {
         url: '/api/user/verify-otp',
         method: 'post',

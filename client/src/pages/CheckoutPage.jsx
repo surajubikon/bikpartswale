@@ -209,7 +209,7 @@ const CheckoutPage = () => {
           </div>
           <div className='w-full flex flex-col gap-4'>
             <button
-              className='py-2 px-4 border-2 border-green-600 font-semibold text-green-600 hover:bg-green-600 hover:text-white'
+              className='py-2 px-4 border-2 border-green-600 font-semibold text-green-600 hover:bg-red-600 hover:text-white'
               onClick={handleCashOnDelivery}
             >
               Cash on Delivery

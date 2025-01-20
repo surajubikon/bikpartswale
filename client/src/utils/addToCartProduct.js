@@ -30,7 +30,7 @@ export const addToCartProduct = async(productId,qty)=>{
 export const getCartItems = async()=>{
     try {
         const response = await Axios({
-            ...SummaryApi.getCartItems
+            ...SummaryApi.getCartItem
         })
 
         const { data : responseData } = response

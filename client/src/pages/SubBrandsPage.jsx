@@ -30,7 +30,8 @@ const SubBrandsPage = () => {
   const fetchSubBrand = async () => {
     try {
       setLoading(true);
-      const response = await Axios.get("http://localhost:8080/api/sub-brands/get");
+      // const response = await Axios.get("http://localhost:5000/api/sub-brands/get");
+      const response = await Axios.get("http://localhost:5000/api/sub-brands/get");
       const { data: responseData } = response;
       if (responseData.success) {
         setData(responseData.data);
@@ -106,9 +107,12 @@ const SubBrandsPage = () => {
 
     const handleDeleteSubBrand = async () => {
     try {
-      const response = await Axios.delete("http://localhost:8080/api/sub-brands/delete", {
+      const response = await Axios.delete("http://localhost:5000/api/sub-brands/delete", {
         data: deleteSubBrand
       });
+      // const response = await Axios.delete("http://localhost:5000/api/sub-brands/delete", {
+      //   data: deleteSubBrand
+      // });
   
       const { data: responseData } = response;
       if (responseData.success) {

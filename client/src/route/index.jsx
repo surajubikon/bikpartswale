@@ -25,6 +25,13 @@ import CartMobile from "../pages/CartMobile";
 import CheckoutPage from "../pages/CheckoutPage";
 import Success from "../pages/Success";
 import Cancel from "../pages/Cancel";
+import AboutUs from "../components/Aboutus";
+import Contact from "../components/contact";
+import Faq from "../components/faqs";
+import Blog from "../components/blogs";  // Ensure 'Blog.js' exists in the components directory
+import ReturnExchanges from "../components/ReturnExchanges";
+import Newdeal from "../components/newDeal";
+
 
 const router = createBrowserRouter([
     {
@@ -47,6 +54,25 @@ const router = createBrowserRouter([
                 path : "register",
                 element : <Register/>
             },
+            {
+                path : "/about-us",
+                element : <AboutUs/>
+                },
+                {
+                    path : "/blogs",
+                    element : <Blog/>
+                },
+                { path : "/faqs",
+                    element : <Faq/>
+                 },
+                 { 
+                    path: "/contact",
+                    element : <Contact/>
+                    },
+                    {
+                        path : "/return-exchanges",
+                        element : <ReturnExchanges/>
+                    },
             {
                 path : "forgot-password",
                 element : <ForgotPassword/>
@@ -105,7 +131,11 @@ const router = createBrowserRouter([
                     {
                         path : 'product',
                         element : <AdminPermision><ProductAdmin/></AdminPermision>
-                    }
+                    },
+                    {
+                    path : 'newdeal',
+                    element : <AdminPermision><Newdeal/></AdminPermision>
+                },
                 ]
             },
             {

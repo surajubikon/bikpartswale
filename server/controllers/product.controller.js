@@ -1,3 +1,4 @@
+import NewDeal from "../models/newDealsModel.js";
 import ProductModel from "../models/product.model.js";
 import Rating from "../models/ratingSchema.js"; // Add this line to import the Rating model
 
@@ -25,7 +26,8 @@ export const createProductController = async(request,response)=>{
                 success : false
             })
         }
-
+ // Sold out logic - If stock is 0, set 'soldOut' to true
+ const isSoldOut = stock <= 0;
         const product = new ProductModel({
             name ,
             image ,
@@ -39,6 +41,8 @@ export const createProductController = async(request,response)=>{
             discount,
             description,
             more_details,
+
+              soldOut: isSoldOut // Add soldOut field to track availability
         })
         const saveProduct = await product.save()
 
@@ -484,3 +488,176 @@ export const deleteRatingComment = async (req, res) => {
         res.status(500).json({ success: false, message: 'Error deleting rating/comment', error: error.message });
     }
 };
+
+export const createnewdealController = async (req, res) => {
+    try {
+        // Destructure the incoming data from the request body
+        const { product, price, name } = req.body;
+
+        // Validate required fields
+        if (!product || !price || !name) {
+            return res.status(400).json({
+                message: 'Product, Price, and Name are required',
+                error: true,
+                success: false,
+            });
+        }
+        // Create a new deal using the validated and sanitized data
+        const newDeal = new NewDeal({
+            name,
+            product,
+            price, // Ensure this matches your schema field
+           
+        });
+
+        // Save the new deal
+        const savedDeal = await newDeal.save();
+
+        // Return success response
+        return res.status(201).json({
+            message: 'New deal created successfully',
+            data: savedDeal,
+            error: false,
+            success: true,
+        });
+    } catch (error) {
+        // Catch any errors and send appropriate response
+        return res.status(500).json({
+            message: error.message || 'Server error',
+            error: true,
+            success: false,
+        });
+    }
+};
+
+export const getNewDealsController = async (req, res) => {
+    try {
+       
+        const dealProducts = await NewDeal.find({}).populate('product')  // Populating the 'product' field with product details
+        
+        return res.json({
+            message: 'New deal products list',
+            data: dealProducts,
+            success: true,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || 'Server error',
+            error: true,
+            success: false,
+        });
+    }
+};
+export const getSingleNewDealController = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const deal = await NewDeal.findById(id);
+
+        if (!deal) {
+            return res.status(404).json({
+                message: 'Deal not found',
+                error: true,
+                success: false,
+            });
+        }
+
+        return res.json({
+            message: 'Deal details retrieved successfully',
+            data: deal,
+            error: false,
+            success: true,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || 'Server error',
+            error: true,
+            success: false,
+        });
+    }
+};
+export const updateNewDealController = async (req, res) => {
+
+    try {
+        const { id } = req.params;  // Deal ID is expected in the URL
+        const { name, price } = req.body; // Accept name and price in the body
+
+        // Update only name and price
+        const updatedDeal = await NewDeal.findByIdAndUpdate(
+            id, // Correctly reference the ID from the URL
+            { name, price }, // Update fields
+            { new: true } // Ensure the updated document is returned
+        );
+
+        if (!updatedDeal) {
+            return res.status(404).json({
+                message: 'Deal not found',
+                error: true,
+                success: false,
+            });
+        }
+
+        return res.json({
+            message: 'Deal updated successfully',
+            data: updatedDeal,
+            error: false,
+            success: true,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || 'Server error',
+            error: true,
+            success: false,
+        });
+    }
+};
+
+export const deleteNewDealController = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const deletedDeal = await NewDeal.findByIdAndDelete(id);
+
+        if (!deletedDeal) {
+            return res.status(404).json({
+                message: 'Deal not found',
+                error: true,
+                success: false,
+            });
+        }
+
+        return res.json({
+            message: 'Deal deleted successfully',
+            data: deletedDeal,
+            error: false,
+            success: true,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || 'Server error',
+            error: true,
+            success: false,
+        });
+    }
+};
+
+
+export const getAllProducts = async (req, res) => {
+    try {
+      const products = await ProductModel.find();  // Ensure ProductModel is properly imported
+      return res.json({
+        message: "Category product list",
+        data: products,
+        error: false,
+        success: true,
+      });
+    } catch (err) {
+      console.error(err); // Log the error for better debugging
+      res.status(500).json({
+        message: 'Server error',
+        error: true,
+        success: false,
+      });
+    }
+  };
+  
