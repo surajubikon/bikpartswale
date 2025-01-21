@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from "react";
-import UploadNewDealModel from "../components/UploadnewDeal"; // Change for New Deals
+import UploadOffer from "../components/UplaodOffer"; // Change for New Deals
 import Loading from "../components/Loading";
 import NoData from "../components/NoData";
 import Axios from "../utils/Axios";
 import SummaryApi from "../common/SummaryApi";
-import EditNewDeal from "../components/Editnewdeal"; // Change for New Deals
-import ConfirmBox from "../components/CofirmBox"
+import EditOffer from "../components/EditOffer"; // Change for New Deals
+import ConfirmBox from "../components/CofirmBox";
 import toast from "react-hot-toast";
 import AxiosToastError from "../utils/AxiosToastError";
 
-const newDeal = () => {
+const Offer = () => {
   const [openUploadNewDeal, setOpenUploadNewDeal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [newDealsData, setNewDealsData] = useState([]);
   const [openEdit, setOpenEdit] = useState(false);
   const [editData, setEditData] = useState({
-    name: "",
-    image: "",
-    price: "",
+    name: ""
   });
   const [openConfirmBoxDelete, setOpenConfirmBoxDelete] = useState(false);
   const [deleteNewDeal, setDeleteNewDeal] = useState({
@@ -28,7 +26,7 @@ const newDeal = () => {
     try {
       setLoading(true);
       const response = await Axios({
-        ...SummaryApi.getNewDealsController, // APgI endpoint for new deals
+        ...SummaryApi.getNewlineController, // APgI endpoint for new deals
       });
       const { data: responseData } = response;
 
@@ -49,11 +47,10 @@ const newDeal = () => {
   const handleDeleteNewDeal = async () => {
     try {
       const response = await Axios({
-        ...SummaryApi.deleteNewDealController, // API ele for deleting new deals
-        url: `${SummaryApi.deleteNewDealController.url}/${deleteNewDeal._id}`, // Pass ID in URL
-  
+        ...SummaryApi.deleteNewlineController,
+        url: SummaryApi.deleteNewlineController.url.replace(':id', deleteNewDeal._id), 
         data: deleteNewDeal,
-      });
+    });
 
       const { data: responseData } = response;
 
@@ -82,22 +79,12 @@ const newDeal = () => {
 
       <div className="p-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
         {newDealsData.map((deal, index) => {
-          // console.log("bhdsgve",deal)
           return (
-            
             <div className="w-32 h-56 rounded shadow-md" key={deal._id}>
-              <img
-                alt={deal.name}
-                src={deal.product.image[0]}
-                
-                className="w-full object-scale-down"
-              />
+              {/* Removed image */}
               <div className="text-center mt-2">
-                
                 <p className="text-sm font-semibold">{deal.name}</p>
-                {console.log(`check`, deal)}
-                <p className="text-green-600 font-bold">{deal.product?.price}₹</p>
-
+                {/* Removed price */}
               </div>
               <div className="items-center h-9 flex gap-2">
                 <button
@@ -127,14 +114,14 @@ const newDeal = () => {
       {loading && <Loading />}
 
       {openUploadNewDeal && (
-        <UploadNewDealModel
+        <UploadOffer
           fetchData={fetchNewDeals}
           close={() => setOpenUploadNewDeal(false)}
         />
       )}
 
       {openEdit && (
-        <EditNewDeal
+        <EditOffer
           data={editData}
           close={() => setOpenEdit(false)}
           fetchData={fetchNewDeals}
@@ -152,4 +139,4 @@ const newDeal = () => {
   );
 };
 
-export default newDeal;
+export default Offer;

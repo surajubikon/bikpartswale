@@ -24,7 +24,6 @@ const razorpay = new Razorpay({
     key_secret: process.env.RAZORPAY_SECRET,
 });
 
-// Cash on Delivery Order
 export async function CashOnDeliveryOrderController(request, response) {
     try {
         const { list_items, totalAmt, addressId } = request.body;
@@ -43,22 +42,39 @@ export async function CashOnDeliveryOrderController(request, response) {
             payment_mode: "Cash on Delivery",
             delivery_address: addressId,
             totalAmt,
+            quantity: el.quantity, // Include quantity in the order
         }));
-        //  Increment salesCount for each product
-         await Promise.all(
+
+        // Increment salesCount and check stock for each product
+        await Promise.all(
             list_items.map(async (el) => {
+                const product = await ProductModel.findById(el.productId._id);
+
+                if (!product) {
+                    throw new Error(`Product with ID ${el.productId._id} not found`);
+                }
+
+                if (product.stock < el.quantity) {
+                    throw new Error(`Not enough stock for product "${product.name}". Available: ${product.stock}`);
+                }
+
+                // Decrement stock by the quantity of the product bought
                 await ProductModel.findByIdAndUpdate(el.productId._id, {
-                    $inc: { salesCount: 1 },
+                    $inc: { salesCount: el.quantity, stock: -el.quantity },
                 });
+
+                // If stock becomes 0, mark as sold out
+                if (product.stock - el.quantity === 0) {
+                    await ProductModel.findByIdAndUpdate(el.productId._id, {
+                        soldOut: true, // Mark as sold out
+                    });
+                }
             })
         );
-        // await ProductModel.updateOne(
-        //     { _id: el.productId._id }, 
-        //     { $inc: { sales: 1 } }  // Increment sales by 1
-        // );
 
         const generatedOrder = await OrderModel.insertMany(payload);
 
+        // Clear the user's cart after the order is placed
         await CartProductModel.deleteMany({ userId });
         await UserModel.updateOne({ _id: userId }, { shopping_cart: [] });
 
@@ -75,6 +91,8 @@ export async function CashOnDeliveryOrderController(request, response) {
         });
     }
 }
+
+
 
 // Create Razorpay Order
 export async function createRazorpayOrderController(request, response) {
@@ -102,7 +120,6 @@ export async function createRazorpayOrderController(request, response) {
     }
 }
 
-// Verify Razorpay Payment
 export async function verifyRazorpayPaymentController(request, response) {
     try {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature, list_items, totalAmt, addressId } = request.body;
@@ -139,15 +156,34 @@ export async function verifyRazorpayPaymentController(request, response) {
             payment_mode: "Online Payment",
             delivery_address: addressId,
             totalAmt,
+            quantity: el.quantity, // Include quantity in the order
         }));
 
-        // Increment sales count for each product
+        // Handle stock and "sold out" logic
         await Promise.all(
             list_items.map(async (el) => {
-                await ProductModel.updateOne(
-                    { _id: el.productId._id },
-                    { $inc: { sales: 1 } }
-                );
+                const product = await ProductModel.findById(el.productId._id);
+
+                if (!product) {
+                    throw new Error(`Product with ID ${el.productId._id} not found`);
+                }
+
+                // Check if enough stock is available
+                if (product.stock < el.quantity) {
+                    throw new Error(`Not enough stock for product "${product.name}". Available: ${product.stock}`);
+                }
+
+                // Decrement stock by the quantity of the product bought
+                await ProductModel.findByIdAndUpdate(el.productId._id, {
+                    $inc: { salesCount: el.quantity, stock: -el.quantity },
+                });
+
+                // If stock becomes 0, mark as sold out
+                if (product.stock - el.quantity === 0) {
+                    await ProductModel.findByIdAndUpdate(el.productId._id, {
+                        soldOut: true, // Mark as sold out
+                    });
+                }
             })
         );
 
@@ -172,6 +208,7 @@ export async function verifyRazorpayPaymentController(request, response) {
         });
     }
 }
+
 
 
 // Get Order Details

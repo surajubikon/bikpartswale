@@ -1,6 +1,6 @@
-export const baseURL = "http://localhost:5000"
-
 // export const baseURL = "http://localhost:5000"
+
+export const baseURL = "https://www.bikepartswale.com/"
 const SummaryApi = {
     register: {
         url: '/api/user/register',
@@ -35,6 +35,25 @@ const SummaryApi = {
             url:'/api/product/newdeal/delete',
             method:'delete',
         },
+//tagline
+getNewlineController:{
+    url:'/api/product/new-line',
+    method:'get',
+},
+createnewlineController:{
+    url:'/api/product/create/new-line',
+    method:'post',
+},
+
+updateNewlineController:{
+    url:'/api/product/update-line/:id',
+    method:'put',
+
+},
+deleteNewlineController:{
+    url:'/api/product/new-line/delete/:id',
+    method:'delete',
+},
 
     verifyOtp: {
         url: '/api/user/verify-otp',

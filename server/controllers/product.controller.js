@@ -1,7 +1,7 @@
 import NewDeal from "../models/newDealsModel.js";
 import ProductModel from "../models/product.model.js";
 import Rating from "../models/ratingSchema.js"; // Add this line to import the Rating model
-
+import NewTagline from "../models/OfferModel.js"
 export const createProductController = async(request,response)=>{
     try {
         const { 
@@ -19,7 +19,7 @@ export const createProductController = async(request,response)=>{
             more_details,
         } = request.body 
 
-        if(!name || !image[0] || !category[0] || !subCategory[0]|| !brand[0] || !subBrand[0] || !unit || !price || !description ){
+        if(!name || !image[0] || !category[0] || !subCategory[0]|| !brand[0] || !subBrand[0] || !unit || !price || !description  ){
             return response.status(400).json({
                 message : "Enter required fields",
                 error : true,
@@ -661,3 +661,126 @@ export const getAllProducts = async (req, res) => {
     }
   };
   
+  //tageline
+
+  export const getNewlineController = async (req, res) => {
+    try {
+        // Fetch only the 'name' field of the taglines
+        const taglines = await NewTagline.find({}, 'name'); // Only return 'name' field
+        
+        return res.json({
+            message: 'New tagline list',
+            data: taglines,
+            success: true,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || 'Server error',
+            error: true,
+            success: false,
+        });
+    }
+};
+export const createnewlineController = async (req, res) => {
+    try {
+        const { name } = req.body; // Only expecting 'name' in the body
+
+        // Validate that 'name' is provided
+        if (!name) {
+            return res.status(400).json({
+                message: 'Name is required',
+                error: true,
+                success: false,
+            });
+        }
+
+        // Create a new tagline with only the 'name' field
+        const newLine = new NewTagline({ name });
+
+        await newLine.save();
+
+        return res.json({
+            message: 'New tagline created successfully',
+            data: newLine,
+            success: true,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || 'Server error',
+            error: true,
+            success: false,
+        });
+    }
+};
+export const updateNewlineController = async (req, res) => {
+    try {
+        const { id } = req.params; // Tagline ID is expected in the URL
+        const { name } = req.body; // Accept name in the body
+
+        // Validate that 'name' is provided
+        if (!name) {
+            return res.status(400).json({
+                message: 'Name is required',
+                error: true,
+                success: false,
+            });
+        }
+
+        // Update only the 'name' field
+        const updatedLine = await NewTagline.findByIdAndUpdate(
+            id, // Correctly reference the ID from the URL
+            { name }, // Update the 'name' field
+            { new: true } // Ensure the updated document is returned
+        );
+
+        if (!updatedLine) {
+            return res.status(404).json({
+                message: 'Tagline not found',
+                error: true,
+                success: false,
+            });
+        }
+
+        return res.json({
+            message: 'Tagline updated successfully',
+            data: updatedLine,
+            error: false,
+            success: true,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || 'Server error',
+            error: true,
+            success: false,
+        });
+    }
+};
+export const deleteNewlineController = async (req, res) => {
+    try {
+        const { id } = req.params; // Get tagline ID from the URL
+
+        const deletedLine = await NewTagline.findByIdAndDelete(id); // Delete the tagline by ID
+
+        if (!deletedLine) {
+            return res.status(404).json({
+                message: 'Tagline not found',
+                error: true,
+                success: false,
+            });
+        }
+
+        return res.json({
+            message: 'Tagline deleted successfully',
+            data: deletedLine,
+            error: false,
+            success: true,
+        });
+    } catch (error) {
+        return res.status(500).json({
+            message: error.message || 'Server error',
+            error: true,
+            success: false,
+        });
+    }
+};
+

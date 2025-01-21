@@ -41,7 +41,7 @@ const Home = () => {
   const [error, setError] = useState(null);
   const [topSellingProducts, setTopSellingProducts] = useState([]);
   const [newDeal, setNewDeal]=useState([]);
-  
+  const [newOfferline, setNewOfferLine]=useState([]);
 
   useEffect(() => {
     
@@ -49,10 +49,10 @@ const Home = () => {
       
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/brand-models/get"
+          "https://www.bikepartswale.com/api/brand-models/get"
         );
         // const response = await axios.get(
-        //   "http://localhost:5000/api/brand-models/get"
+        //   "https://www.bikepartswale.com/api/brand-models/get"
         // );
         
         setBrands(response.data?.data || []);
@@ -66,7 +66,7 @@ const Home = () => {
     const fetchTopSellingProducts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/product/top-selling-products"
+          "https://www.bikepartswale.com/api/product/top-selling-products"
 
         );
         
@@ -80,7 +80,7 @@ const Home = () => {
       
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/product/new-deals"
+          "https://www.bikepartswale.com/api/product/new-deals"
 
         );
         
@@ -90,9 +90,24 @@ const Home = () => {
         setError("Failed to load top-selling products");
       }
     };
+    const fetchOfferline = async () => {
+      
+      try {
+        const response = await axios.get(
+          "https://www.bikepartswale.com/api/product/new-line"
+
+        );
+        
+        setNewOfferLine(response.data?.data || []);
+      } catch (err) {
+        console.error("Error fetching offer line:", err);
+        setError("Failed to load offerline ");
+      }
+    };
 
     fetchBrands();
     fetchNewdeal();
+    fetchOfferline();
     fetchTopSellingProducts();
   }, []);
 
@@ -231,6 +246,81 @@ const Home = () => {
 
       </div>
 
+      <div className="container mx-auto px-6 my-4">
+  <div className="home-heading text-center relative">
+    <h2 className="text-2xl font-bold">Top New Deals</h2>
+    <div className="container mx-auto px-6 my-4">
+  {loading ? (
+    <p>Loading Offer...</p>
+  ) : error ? (
+    <p className="text-red-600">{error}</p>
+  ) : (
+    <>
+      <div className="relative overflow-hidden bg-red-600 rounded-lg p-4 shadow-md">
+       
+        <div className="absolute inset-0 flex items-center">
+          <marquee className="text-white text-lg font-semibold">
+            {newOfferline?.map((product, index) => (
+              <span key={index} className="mx-4">
+                {product.name}
+              </span>
+            ))}
+          </marquee>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mt-6">
+        {newOfferline?.map((product, index) => (
+         <div>
+</div>  ))}
+      </div>
+    </>
+  )}
+</div>
+
+  </div>
+
+  {loading ? (
+    <p>Loading top new deals products...</p>
+  ) : error ? (
+    <p className="text-red-600">{error}</p>
+  ) : (
+    <>
+      {console.log("New Deals Data:", newDeal)}
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+        {newDeal?.map((product, index) => {
+        
+         
+          return (
+            <div
+              key={product._id}
+              className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col justify-between h-full"
+            >
+              <img
+                src={product?.product?.image[0] || ""}
+                alt={product.name || "Product Image"}
+                className="w-full h-32 object-cover rounded-md mb-4"
+              />
+              <div className="flex-grow">
+                <h3 className="text-sm font-semibold text-gray-800">{product?.product?.name}</h3>
+              </div>
+              <div>
+            
+                <p className="text-lg font-bold text-green-600">{product?.product?.price}₹</p>
+                <Link
+                  to={`/product/${product?.product._id}`}
+
+                  className="inline-block bg-red-600 text-white py-2 px-4 rounded-lg mt-2 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+                >
+                  View Details
+                </Link>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  )}
+</div>
 
       <div className="container mx-auto px-6 my-4">
         <div className="home-heading text-center relative">
@@ -266,54 +356,6 @@ const Home = () => {
           </div>
         )}
       </div>
-
- <div className="container mx-auto px-6 my-4">
-  <div className="home-heading text-center relative">
-    <h2 className="text-2xl font-bold">Top New Deals</h2>
-  </div>
-
-  {loading ? (
-    <p>Loading top new deals products...</p>
-  ) : error ? (
-    <p className="text-red-600">{error}</p>
-  ) : (
-    <>
-      {console.log("New Deals Data:", newDeal)}
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
-        {newDeal?.map((product, index) => {
-          console.log(`Product`, product.product.image[0]);
-          {console.log("New price Data:", product.product.name)}
-          return (
-            <div
-              key={product._id}
-              className="bg-white rounded-lg p-4 shadow-md hover:shadow-lg transition-transform transform hover:scale-105 flex flex-col justify-between h-full"
-            >
-              <img
-                src={product?.product?.image[0] || ""}
-                alt={product.name || "Product Image"}
-                className="w-full h-32 object-cover rounded-md mb-4"
-              />
-              <div className="flex-grow">
-                <h3 className="text-sm font-semibold text-gray-800">{product?.product?.name}</h3>
-              </div>
-              <div>
-            
-                <p className="text-lg font-bold text-green-600">{product?.product?.price}₹</p>
-                <Link
-                  to={`/product/${product?.product._id}`}
-
-                  className="inline-block bg-red-600 text-white py-2 px-4 rounded-lg mt-2 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
-                >
-                  View Details
-                </Link>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </>
-  )}
-</div>
 
 
 
@@ -361,72 +403,6 @@ const Home = () => {
   </div>
 </div>
 
-
-
-      <div class="container mx-auto px-4 bike-parts">
-        <div class="home-heading text-center">
-          <h2>Bike Body Parts</h2>
-          <p>Five star rated latest best selling products</p>
-        </div>
-        <div class="">
-          <div class="grid grid-cols-6 gap-4">
-            <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-              <div class="">
-                <div class="p-3 bg-white rounded-full shadow-lg">
-                  <img src={bannerMobile} className="rounded-full" />
-                  {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
-                </div>
-                <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
-              </div>
-            </div>
-            <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-              <div class="">
-                <div class="p-3 bg-white rounded-full shadow-lg">
-                  <img src={bannerMobile} className="rounded-full" />
-                  {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
-                </div>
-                <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
-              </div>
-            </div>
-            <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-              <div class="">
-                <div class="p-3 bg-white rounded-full shadow-lg">
-                  <img src={bannerMobile} className="rounded-full" />
-                  {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
-                </div>
-                <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
-              </div>
-            </div>
-            <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-              <div class="">
-                <div class="p-3 bg-white rounded-full shadow-lg">
-                  <img src={bannerMobile} className="rounded-full" />
-                  {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
-                </div>
-                <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
-              </div>
-            </div>
-            <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-              <div class="">
-                <div class="p-3 bg-white rounded-full shadow-lg">
-                  <img src={bannerMobile} className="rounded-full" />
-                  {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
-                </div>
-                <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
-              </div>
-            </div>
-            <div class="bike-parts-iteam p-3 flex flex-col justify-between">
-              <div class="">
-                <div class="p-3 bg-white rounded-full shadow-lg">
-                  <img src={bannerMobile} className="rounded-full" />
-                  {/* <img src="http://res.cloudinary.com/dcwfrn0c0/image/upload/v1733836619/binkeyit/a5h3pzundruz2uiyfgvo.svg" class="" alt="Bike"> */}
-                </div>
-                <h3 class="text-lg font-semibold text-center mt-3">Silencer</h3>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <div className="container mx-auto px-4 my-4 grid grid-cols-1 sm:grid-cols-2 gap-4 descount-offer">
         <div className="bg-red-600 text-white p-6 rounded-lg shadow-lg descount-offer-left">

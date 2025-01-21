@@ -8,7 +8,11 @@ import { createProductController,
     getRatingComments,
     deleteNewDealController,
     updateNewDealController,
-    deleteRatingComment, 
+    deleteRatingComment,
+    getNewlineController, 
+    createnewlineController,
+    updateNewlineController,
+    deleteNewlineController,
     getProductByBrand,
     getAllProducts,
     getProductByBrandAndSubBrand,
@@ -43,6 +47,14 @@ productRouter.get('/singledeal', getSingleNewDealController); // Get a single de
 productRouter.post('/create/new-deals', auth, admin, createnewdealController); // Create a new deal
 productRouter.put('/update/:id', auth, admin, updateNewDealController); // Update a deal by ID
 productRouter.delete('/newdeal/delete/:id', auth, admin, deleteNewDealController); // Delete a deal by ID
+
+//offerline
+// New Deals routes
+productRouter.get('/new-line', getNewlineController); // Get all deals
+productRouter.post('/create/new-line', auth, admin, createnewlineController); // Create a new deal
+productRouter.put('/update-line/:id', auth, admin, updateNewlineController); // Update a deal by ID
+productRouter.delete('/new-line/delete/:id', auth, admin, deleteNewlineController); // Delete a deal by ID
+
 
 
 //search product 
