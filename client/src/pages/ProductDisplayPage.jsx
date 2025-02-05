@@ -33,8 +33,8 @@ const ProductDisplayPage = () => {
   const fetchProductDetails = async () => {
     setLoading(true);
     try {
-      // const response = await Axios.post('https://www.bikepartswale.com/api/product/get-product-details', { productId });
-      const response = await Axios.post('https://www.bikepartswale.com/api/product/get-product-details', { productId });
+      // const response = await Axios.post('http://localhost:5000/api/product/get-product-details', { productId });
+      const response = await Axios.post('http://localhost:5000/api/product/get-product-details', { productId });
       const { data: responseData } = response;
       if (responseData.success) {
         setData(responseData.data);
@@ -49,10 +49,10 @@ const ProductDisplayPage = () => {
   const fetchRatingsAndComments = async () => {
     try {
       const userId = localStorage.getItem('userId'); // Get userId from local storage or state
-      const response = await Axios.get('https://www.bikepartswale.com/api/product/get-rating-comments', {
+      const response = await Axios.get('http://localhost:5000/api/product/get-rating-comments', {
         params: { productId, userId }
       });
-      // const response = await Axios.get('https://www.bikepartswale.com/api/product/get-rating-comments', {
+      // const response = await Axios.get('http://localhost:5000/api/product/get-rating-comments', {
       //   params: { productId, userId }
       // });
 
@@ -69,10 +69,10 @@ const ProductDisplayPage = () => {
     if (newRating > 0 && newComment.trim() !== "" && username.trim() !== "") {
       try {
         const token = localStorage.getItem('token');
-        const response = await Axios.post('https://www.bikepartswale.com/api/product/add-rating-comment', {
+        const response = await Axios.post('http://localhost:5000/api/product/add-rating-comment', {
           productId, rating: newRating, comment: newComment, username
         }, 
-        // const response = await Axios.post('https://www.bikepartswale.com/api/product/add-rating-comment', {
+        // const response = await Axios.post('http://localhost:5000/api/product/add-rating-comment', {
         //   productId, rating: newRating, comment: newComment, username
         // }, 
         { headers: { 'Authorization': `Bearer ${token}` } });
@@ -94,8 +94,8 @@ const ProductDisplayPage = () => {
 
   const handleRatingDelete = async (ratingId) => {
     try {
-      const response = await Axios.delete('https://www.bikepartswale.com/api/product/delete-rating-comment', { data: { ratingId } });
-      // const response = await Axios.delete('https://www.bikepartswale.com/api/product/delete-rating-comment', { data: { ratingId } });
+      const response = await Axios.delete('http://localhost:5000/api/product/delete-rating-comment', { data: { ratingId } });
+      // const response = await Axios.delete('http://localhost:5000/api/product/delete-rating-comment', { data: { ratingId } });
       const { data: responseData } = response;
       if (responseData.success) {
         setRatings(prevRatings => prevRatings.filter(rating => rating._id !== ratingId));

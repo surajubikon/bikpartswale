@@ -32,6 +32,8 @@ import Blog from "../components/blogs";  // Ensure 'Blog.js' exists in the compo
 import ReturnExchanges from "../components/ReturnExchanges";
 import Newdeal from "../components/newDeal";
 import Offer from "../components/Offer";
+import Banner from "../components/bannerPage";
+
 
 
 const router = createBrowserRouter([
@@ -141,6 +143,11 @@ const router = createBrowserRouter([
                     path : 'tagline',
                     element : <AdminPermision><Offer/></AdminPermision>
                 },
+                {
+                    path : 'banner',
+                    element : <AdminPermision><Banner/></AdminPermision>
+                },
+                
                 ]
             },
             {

@@ -29,7 +29,7 @@ const ProductListPage = () => {
 
   const brandId = params.category.split("-").slice(-1)[0]
   const subBrandId = params.subCategory.split("-").slice(-1)[0]
-  console.log(brandId,subBrandId,"33")
+  
   const fetchProductdata = async () => {
     try {
       setLoading(true)

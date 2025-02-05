@@ -9,7 +9,7 @@ import SummaryApi from '../common/SummaryApi';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
-const RAZORPAY_KEY_ID = 'rzp_test_Ra46djE2vErkV7';
+const RAZORPAY_KEY_ID = 'rzp_test_0BC4OI8zW9Hv7K';
 
 const CheckoutPage = () => {
   const { notDiscountTotalPrice, totalPrice, totalQty, fetchCartItem, fetchOrder } = useGlobalContext();
@@ -63,7 +63,7 @@ const CheckoutPage = () => {
         key: RAZORPAY_KEY_ID,
         amount: totalPrice * 100,
         currency: 'INR',
-        name: 'E-commerce Checkout',
+        name: 'SAFFRON BUILDTECH',
         description: 'Thank you for your purchase!',
         order_id,
         handler: async (response) => {

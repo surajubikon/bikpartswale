@@ -109,10 +109,10 @@
 } */
 
 /*****/
-footer {
-    background-image: url(../footer.png);
-    background-size: 100%;
-}
+/* footer {
+    /* background-image: url(../footer.png); */
+    /* background-size: 100%; */
+ */
 footer h3 {
     font-size: 19px !important;
     font-weight: 500 !important;

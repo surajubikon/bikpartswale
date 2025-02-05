@@ -76,11 +76,11 @@ const UploadSubBrandModel = ({ close, fetchData }) => {
     
         try {
             const response = await Axios.post(
-                "https://www.bikepartswale.com/api/sub-brands/add-subbrand",
+                "http://localhost:5000/api/sub-brands/add-subbrand",
                 payload
             );
             // const response = await Axios.post(
-            //     "https://www.bikepartswale.com/api/sub-brands/add-subbrand",
+            //     "http://localhost:5000/api/sub-brands/add-subbrand",
             //     payload
             // );
             const { data: responseData } = response;

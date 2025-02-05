@@ -16,7 +16,7 @@ import addressRouter from './route/address.route.js'
 import orderRouter from './route/order.route.js'
 import subBrandRouter from './route/subbrand.router.js'; 
 import brandsmodelsRouter from  './route/brandsmodel.router.js'
-
+import bannerRouter from './route/banner.router.js';
 const app = express()
 app.use(cors({
     credentials : true,
@@ -41,6 +41,7 @@ app.get("/",(request,response)=>{
 })
 
 app.use('/api/user',userRouter)
+app.use('/api/banner', bannerRouter)
 app.use("/api/category",categoryRouter)
 app.use("/api/brand-models",brandsmodelsRouter);
 app.use('/api/sub-brands', subBrandRouter);

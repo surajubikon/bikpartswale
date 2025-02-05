@@ -106,6 +106,7 @@ export async function createRazorpayOrderController(request, response) {
         };
 
         const razorpayOrder = await razorpay.orders.create(options);
+        console.log(razorpayOrder); // Log the order to check the response
 
         return response.status(200).json({
             success: true,
@@ -124,7 +125,7 @@ export async function verifyRazorpayPaymentController(request, response) {
     try {
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature, list_items, totalAmt, addressId } = request.body;
         const userId = request.userId;
-
+    
         // Generate signature to verify payment
         const generatedSignature = crypto
             .createHmac("sha256", process.env.RAZORPAY_SECRET)

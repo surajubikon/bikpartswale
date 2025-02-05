@@ -19,6 +19,7 @@ import pb6 from "../assets/pb6.png";
 import CategoryWiseProductDisplay from "../components/CategoryWiseProductDisplay";
 import BrandWiseProductDisplay from "../components/BrandWiseProductDisplay";
 import { valideURLConvert } from "../utils/valideURLConvert";
+
 // import { Navigation } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';  // If using Navigation module
@@ -29,6 +30,7 @@ import 'swiper/css/pagination';  // If using Pagination module
 
 
 const Home = () => {
+  const [bannerData, setBannerData] = useState(null);
   const loadingCategory = useSelector((state) => state.product.loadingCategory);
   const categoryData = useSelector((state) => state.product.allCategory);
   const subCategoryData = useSelector((state) => state.product.allSubCategory);
@@ -49,10 +51,10 @@ const Home = () => {
       
       try {
         const response = await axios.get(
-          "https://www.bikepartswale.com/api/brand-models/get"
+          "http://localhost:5000/api/brand-models/get"
         );
         // const response = await axios.get(
-        //   "https://www.bikepartswale.com/api/brand-models/get"
+        //   "http://localhost:5000/api/brand-models/get"
         // );
         
         setBrands(response.data?.data || []);
@@ -66,7 +68,7 @@ const Home = () => {
     const fetchTopSellingProducts = async () => {
       try {
         const response = await axios.get(
-          "https://www.bikepartswale.com/api/product/top-selling-products"
+          "http://localhost:5000/api/product/top-selling-products"
 
         );
         
@@ -80,7 +82,7 @@ const Home = () => {
       
       try {
         const response = await axios.get(
-          "https://www.bikepartswale.com/api/product/new-deals"
+          "http://localhost:5000/api/product/new-deals"
 
         );
         
@@ -94,7 +96,7 @@ const Home = () => {
       
       try {
         const response = await axios.get(
-          "https://www.bikepartswale.com/api/product/new-line"
+          "http://localhost:5000/api/product/new-line"
 
         );
         
@@ -104,7 +106,20 @@ const Home = () => {
         setError("Failed to load offerline ");
       }
     };
-
+    const fetchBanner = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/api/banner/get-banner');
+        console.log('Banner response 123:', response?.data); // Log the full response
+        setBannerData(response); // Assuming the API returns the banner data directly
+      } catch (err) {
+        console.error("Error fetching banner:", err);
+        setError("Failed to load banner");
+      }
+   };
+   
+    
+   
+     fetchBanner();
     fetchBrands();
     fetchNewdeal();
     fetchOfferline();
@@ -154,23 +169,34 @@ const Home = () => {
 
   return (
     <section className="bg-white">
-      <div className="container mx-auto">
-        <div
-          className={`w-full h-full min-h-48 bg-blue-100 rounded ${!banner && "animate-pulse my-2"
-            }`}
-        >
-          <img
-            src={banner}
-            className="w-full h-full hidden lg:block"
-            alt="banner"
-          />
-          <img
-            src={bannerMobile}
-            className="w-full h-full lg:hidden"
-            alt="banner"
-          />
-        </div>
-      </div>
+    <div className="container mx-auto">
+    {console.log("Banner Data:", bannerData)}
+
+  <div
+    className={`w-full h-full min-h-48 bg-blue-100 rounded ${!bannerData && "animate-pulse my-2"}`}
+  >
+    {bannerData?(
+      <>
+    
+        <img
+          src={bannerData.data?.data[0]?.image} // Use the 'image' property from the response
+          
+          className="w-full h-full hidden lg:block"
+          alt="banner"
+        />
+        {/* You can add another image tag for mobile version if you want, but using the same image */}
+        <img
+          src={bannerData.data?.data[0]?.image} // Assuming mobile and desktop images are the same
+          className="w-full h-full lg:hidden"
+          alt="banner"
+        />
+      </>
+    ) : (
+      <div className="w-full h-full bg-gray-200"></div> // Placeholder while loading
+    )}
+  </div>
+</div>
+
 
 
       {/** update brands */}
