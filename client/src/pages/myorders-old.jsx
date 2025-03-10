@@ -34,8 +34,8 @@
 //   };
 
 //   const saveStatus = async () => {
-//     // const url = `http://localhost:5000/api/order/${selectedOrder._id}/update-status`;
-//     const url = `http://localhost:5000/api/order/${selectedOrder._id}/update-status`;
+//     // const url = `http://localhost:5173/api/order/${selectedOrder._id}/update-status`;
+//     const url = `http://localhost:5173/api/order/${selectedOrder._id}/update-status`;
   
 //     // Get token from localStorage or cookies
 //     const token = localStorage.getItem('accessToken'); // Or from cookies if you're using them
@@ -355,7 +355,7 @@
 //   };
 
 //   const saveStatus = async () => {
-//     const url = `http://localhost:5000/api/order/${selectedOrder._id}/update-status`;
+//     const url = `http://localhost:5173/api/order/${selectedOrder._id}/update-status`;
 //     const token = localStorage.getItem('accessToken');
 
 //     try {
@@ -699,7 +699,7 @@
 //   };
 
 //   const saveStatus = async () => {
-//     const url = `http://localhost:5000/api/order/${selectedOrder._id}/update-status`;
+//     const url = `http://localhost:5173/api/order/${selectedOrder._id}/update-status`;
 //     const token = localStorage.getItem('accessToken');
 
 //     try {

@@ -46,7 +46,7 @@ function Faqs() {
         </div>  
       ))}   
       
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">  
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">  
         <div className="bg-white p-4 rounded-lg shadow flex flex-col items-center text-center">  
           <FaComments className="text-blue-500 text-3xl mb-2" />  
           <h3 className="text-lg font-semibold text-indigo-900">Live Chat Support</h3>  
@@ -58,16 +58,16 @@ function Faqs() {
           <h3 className="text-lg font-semibold text-indigo-900">Send a Message</h3>  
           <p className="text-gray-600">info@eauto.co.in</p>  
         </div>  
-      </div>  
+      </div>   */}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">  
-        <div className="bg-white p-4 rounded-lg shadow flex items-center">  
+        {/* <div className="bg-white p-4 rounded-lg shadow flex items-center">  
           <span className="material-icons text-blue-500 mr-3">chat</span>  
           <div>  
             <h3 className="text-lg font-semibold text-indigo-900">Live Chat</h3>  
             <p className="text-gray-600">Talk to an agent</p>  
           </div>  
-        </div>  
+        </div>   */}
 
         <div className="bg-white p-4 rounded-lg shadow flex items-center">  
           <span className="material-icons text-blue-500 mr-3">local_shipping</span>  

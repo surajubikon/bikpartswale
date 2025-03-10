@@ -13,6 +13,13 @@ export default defineConfig({
     hmr: {
       overlay: false, // Disable the error overlay if needed
     },
+    proxy: {
+      '/api': {
+        target: 'http://139.59.11.243:5000',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
   
   })

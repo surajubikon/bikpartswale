@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import logo from '../assets/logobiike.png';
+import logo from '../assets/logo.png';
 import Search from './Search';
 import { Link, useNavigate } from 'react-router-dom';
 import { FaRegUser, FaShoppingCart } from 'react-icons/fa';
@@ -42,15 +42,15 @@ const Header = () => {
                     <Link to="/" className="h-full flex justify-center items-center">
                         <img
                             src={logo}
-                            width={170}
-                            height={60}
+                            width={110}
+                            height={70}
                             alt="logo"
                             className="hidden lg:block"
                         />
                         <img
                             src={logo}
                             width={120}
-                            height={60}
+                            height={70}
                             alt="logo"
                             className="lg:hidden"
                         />

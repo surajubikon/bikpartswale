@@ -15,10 +15,10 @@ const CardProduct = ({ data }) => {
   useEffect(() => {
     const fetchRatings = async () => {
       try {
-        const response = await Axios.get('http://localhost:5000/api/product/get-rating-comments', {
+        const response = await Axios.get('http://localhost:5173/api/product/get-rating-comments', {
           params: { productId: data._id }
         });
-        // const response = await Axios.get('http://localhost:5000/api/product/get-rating-comments', {
+        // const response = await Axios.get('http://localhost:5173/api/product/get-rating-comments', {
         //   params: { productId: data._id }
         // });
         const { data: responseData } = response;

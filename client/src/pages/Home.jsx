@@ -51,10 +51,10 @@ const Home = () => {
       
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/brand-models/get"
+          "http://localhost:5173/api/brand-models/get"
         );
         // const response = await axios.get(
-        //   "http://localhost:5000/api/brand-models/get"
+        //   "http://localhost:5173/api/brand-models/get"
         // );
         
         setBrands(response.data?.data || []);
@@ -68,7 +68,7 @@ const Home = () => {
     const fetchTopSellingProducts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/product/top-selling-products"
+          "http://localhost:5173/api/product/top-selling-products"
 
         );
         
@@ -82,7 +82,7 @@ const Home = () => {
       
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/product/new-deals"
+          "http://localhost:5173/api/product/new-deals"
 
         );
         
@@ -96,7 +96,7 @@ const Home = () => {
       
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/product/new-line"
+          "http://localhost:5173/api/product/new-line"
 
         );
         
@@ -108,7 +108,7 @@ const Home = () => {
     };
     const fetchBanner = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/banner/get-banner');
+        const response = await axios.get('http://localhost:5173/api/banner/get-banner');
         console.log('Banner response 123:', response?.data); // Log the full response
         setBannerData(response); // Assuming the API returns the banner data directly
       } catch (err) {
@@ -437,7 +437,7 @@ const Home = () => {
               <h2 className="font-semibold text-sm">BIG SALE COUNTDOWN</h2>
               <h3 className="text-3xl font-bold my-2 text-4xl">Hurray Up!</h3>
               <p className="text-xs mb-4 pr-12">
-                Lorem ipsum dolor sit amet consectetur. Netus in pulvinar convallis ut arcu aliquet. grr vida interdum  amet  nunc  in amet adi
+              Don't miss out on amazing deals. Grab your favorites before time runs out!
               </p>
             </div>
             <div className="text-center">

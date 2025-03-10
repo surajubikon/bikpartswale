@@ -45,7 +45,8 @@ function AboutUs() {
       
       <div className="mt-5">  
         <h3 className="text-2xl font-bold text-indigo-900">Contact Us:</h3>  
-        <p className="mt-2 text-gray-600">Email: <a href="mailto:info@bikapartswale.co.in" className="text-blue-500">info@bikepartswale.co.in</a></p>  
+        <p className="mt-2 text-gray-600">Email: <a href="mailto:info@bikapartswale.co.in" className="text-blue-500">
+      bikepartswale@gmail.com</a></p>  
       </div>  
     </div>  
   );  
