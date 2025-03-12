@@ -83,7 +83,7 @@ const Search = () => {
                         <input
                             type='text'
                             placeholder='Search for Parts and more.'
-                            autoFocus
+                           
                             defaultValue={searchText}
                             className='bg-transparent w-full h-full outline-none'
                             onChange={handleOnChange}

@@ -82,7 +82,7 @@ const newDeal = () => {
 
       <div className="p-4 grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-2">
         {newDealsData.map((deal, index) => {
-          // console.log("bhdsgve",deal)
+         
           return (
             
             <div className="w-32 h-56 rounded shadow-md" key={deal._id}>
@@ -95,7 +95,7 @@ const newDeal = () => {
               <div className="text-center mt-2">
                 
                 <p className="text-sm font-semibold">{deal.name}</p>
-                {console.log(`check`, deal)}
+             
                 <p className="text-green-600 font-bold">{deal.product?.price}₹</p>
 
               </div>

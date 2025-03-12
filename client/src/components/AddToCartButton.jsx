@@ -3,11 +3,12 @@ import { useGlobalContext } from '../provider/GlobalProvider'
 import Axios from '../utils/Axios'
 import SummaryApi from '../common/SummaryApi'
 import toast from 'react-hot-toast'
-import AxiosToastError from '../utils/AxiosToastError'
+// import AxiosToastError from '../utils/AxiosToastError'
 import Loading from './Loading'
 import { useSelector } from 'react-redux'
 import { FaMinus, FaPlus } from "react-icons/fa6";
 import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+
 
 const AddToCartButton = ({ data }) => {
     const { fetchCartItem, updateCartItem, deleteCartItem } = useGlobalContext()
@@ -32,6 +33,7 @@ const AddToCartButton = ({ data }) => {
                 data: {
                     productId: data?._id
                 }
+            
             })
 
             const { data: responseData } = response
@@ -43,12 +45,54 @@ const AddToCartButton = ({ data }) => {
                 }
             }
         } catch (error) {
-            AxiosToastError(error)
+            // AxiosToastError(error)
+            toast.error("Please Login First")
+            
         } finally {
             setLoading(false)
         }
     }
-
+    const handleBuyNow = async () => {
+        if (isSoldOut) {
+            toast.error("This product is sold out");
+            return;
+        }
+    
+        if (qty >= stock) {
+            toast.error("You cannot buy more than the available stock.");
+            return;
+        }
+    
+        try {
+            setLoading(true);
+    
+            const response = await Axios({
+                ...SummaryApi.addTocart,
+                data: {
+                    productId: data._id,
+                    quantity: 1,
+                },
+            });
+    
+            if (response.data.success) {
+                toast.success("Product added to cart successfully!");
+    
+                // 🛒 Cart ko bina refresh ke turant update karo
+                if (fetchCartItem) {
+                    await fetchCartItem();  // Redux state turant update karega
+                }
+    
+                // ✅ Checkout page pe redirect karo
+                navigate('/checkout', { state: { buyNowProduct: { ...data, quantity: 1 } } });
+            }
+        } catch (error) {   
+            toast.error("Failed to add product to cart");
+        } finally {
+            setLoading(false);
+        }
+    };
+    
+    
     //checking this item in cart or not
     useEffect(() => {
         const checkingitem = cartItem.some(item => item.productId._id === data._id)
@@ -94,15 +138,8 @@ const AddToCartButton = ({ data }) => {
         }
     }
 
-    const handleBuyNow = () => {
-        if (isSoldOut) {
-            toast.error("This product is sold out");
-        } else if (qty > stock) {
-            toast.error("You cannot buy more than the available stock.");
-        } else {
-            navigate('/checkout'); // Redirect to /checkout page
-        }
-    };
+  
+    
 
     return (
         <div className='w-full max-w-[150px] flex flex-col gap-2'>

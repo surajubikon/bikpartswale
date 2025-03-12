@@ -33,13 +33,19 @@ import ReturnExchanges from "../components/ReturnExchanges";
 import Newdeal from "../components/newDeal";
 import Offer from "../components/Offer";
 import Banner from "../components/bannerPage";
-
+import FixScrollIssue from "../components/FixScrollIssue";
 
 
 const router = createBrowserRouter([
     {
         path : "/",
-        element : <App/>,
+        element : 
+        (
+            <>
+                <FixScrollIssue/> {/* ✅ Ye scroll issue fix karega */}
+                <App />
+            </>
+        ),
         children : [
             {
                 path : "",

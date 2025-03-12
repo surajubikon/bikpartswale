@@ -9,6 +9,7 @@ import { useSelector } from 'react-redux';
 import { useGlobalContext } from '../provider/GlobalProvider';
 import DisplayCartItem from './DisplayCartItem';
 import UserMenu from './UserMenu';
+import Marqu from './Marqu/marqu';
 // import { GoTriangleUp, GoTriangleDown } from 'react-icons/go';  
 import { FaUserCircle } from 'react-icons/fa'; // Example icon, replace with your preferred one  
 
@@ -67,7 +68,7 @@ const Header = () => {
                     {/* Account Section */}
                     {user?._id ? (
                         <div className="relative">
-                         
+
 
                             <button
                                 onClick={handleUserMenuToggle}
@@ -124,13 +125,11 @@ const Header = () => {
                     </button>
                 </div>
             </div>
-
-            {/* Marquee */}
-            <div className="bg-gray-900 text-white h-10 flex items-center overflow-hidden whitespace-nowrap font-bold">
-                <div className="animate-marquee flex space-x-10">
-                    <span className="px-10">🚴 Premium Quality Parts | 🔧 Discounts Available | 🏍️ Exclusive Deals on Accessories! Shop Now!</span>
-                </div>
+            <div>
+            <Marqu/>
             </div>
+           
+
 
             {/* Mobile Search */}
             <div className="container mx-auto px-2 lg:hidden">

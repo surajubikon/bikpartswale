@@ -14,7 +14,7 @@
 //   const [loading, setLoading] = useState(false)
 //   const [totalPage, setTotalPage] = useState(1)
 //   const params = useParams()
-//   console.log("17",params)
+// 
 //   const AllSubCategory = useSelector(state => state.product.allSubCategory)
 //   const allSubBrands = useSelector(state => state.product.allSubBrands)
 //   const [DisplaySubCatory, setDisplaySubCategory] = useState([])

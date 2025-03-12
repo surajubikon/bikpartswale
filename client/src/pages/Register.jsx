@@ -114,7 +114,7 @@ const Register = () => {
                         <input  
                             type='text'  
                             id='name'  
-                            autoFocus  
+                        
                             className='bg-blue-50 p-3 border border-gray-300 rounded-md outline-none focus:border-blue-500 focus:ring focus:ring-blue-200'  
                             name='name'  
                             value={data.name}  

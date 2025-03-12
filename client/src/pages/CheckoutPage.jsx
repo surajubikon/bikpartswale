@@ -8,6 +8,8 @@ import Axios from '../utils/Axios';
 import SummaryApi from '../common/SummaryApi';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
+
 
 const RAZORPAY_KEY_ID = 'rzp_test_0BC4OI8zW9Hv7K';
 
@@ -18,6 +20,10 @@ const CheckoutPage = () => {
   const [selectAddress, setSelectAddress] = useState(null); // Changed to null to indicate no selection initially
   const cartItemsList = useSelector((state) => state.cartItem.cart);
   const navigate = useNavigate();
+  const location = useLocation();
+  const buyNowProduct = location.state?.buyNowProduct || null;
+ 
+  const finalCartItems = buyNowProduct ? [buyNowProduct] : cartItemsList;
 
   const loadRazorpayScript = () => {
     return new Promise((resolve) => {
@@ -142,6 +148,13 @@ const CheckoutPage = () => {
     }
   };
 
+  const calculateDiscountedPrice = (originalPrice, discount) => {
+    return originalPrice - (originalPrice * discount) / 100;
+  };
+  const finalPrice = buyNowProduct
+    ? calculateDiscountedPrice(buyNowProduct.price, buyNowProduct.discount || 0)
+    : totalPrice;
+
   return (
     <section className='bg-blue-50'>
       <div className='container mx-auto p-4 flex flex-col lg:flex-row w-full gap-5 justify-between'>
@@ -185,28 +198,68 @@ const CheckoutPage = () => {
           <h3 className='text-lg font-semibold'>Summary</h3>
           <div className='bg-white p-4'>
             <h3 className='font-semibold'>Bill details</h3>
+
+            {/* Items Total */}
             <div className='flex gap-4 justify-between ml-1'>
               <p>Items total</p>
               <p className='flex items-center gap-2'>
                 <span className='line-through text-neutral-400'>
-                  {DisplayPriceInRupees(notDiscountTotalPrice)}
+                  {DisplayPriceInRupees(
+                    buyNowProduct ? buyNowProduct.price : notDiscountTotalPrice
+                  )}
                 </span>
-                <span>{DisplayPriceInRupees(totalPrice)}</span>
+                <span>
+                  {DisplayPriceInRupees(
+                    buyNowProduct
+                      ? buyNowProduct.price - (buyNowProduct.price * (buyNowProduct.discount || 0)) / 100
+                      : totalPrice
+                  )}
+                </span>
               </p>
             </div>
+
+            {/* Discount Applied */}
+            {buyNowProduct?.discount || notDiscountTotalPrice > totalPrice ? (
+              <div className='flex gap-4 justify-between ml-1 text-green-600 font-semibold'>
+                <p>Discount Applied</p>
+                <p>
+                  -{DisplayPriceInRupees(
+                    buyNowProduct
+                      ? (buyNowProduct.price * (buyNowProduct.discount || 0)) / 100
+                      : notDiscountTotalPrice - totalPrice
+                  )}
+                </p>
+              </div>
+            ) : null}
+
+            {/* Quantity Total */}
             <div className='flex gap-4 justify-between ml-1'>
               <p>Quantity total</p>
-              <p className='flex items-center gap-2'>{totalQty} items</p>
+              <p className='flex items-center gap-2'>
+                {buyNowProduct ? 1 : totalQty} items
+              </p>
             </div>
+
+            {/* Delivery Charge */}
             <div className='flex gap-4 justify-between ml-1'>
               <p>Delivery Charge</p>
               <p className='flex items-center gap-2'>Free</p>
             </div>
+
+            {/* Grand Total */}
             <div className='font-semibold flex items-center justify-between gap-4'>
               <p>Grand total</p>
-              <p>{DisplayPriceInRupees(totalPrice)}</p>
+              <p>
+                {DisplayPriceInRupees(
+                  buyNowProduct
+                    ? buyNowProduct.price - (buyNowProduct.price * (buyNowProduct.discount || 0)) / 100
+                    : totalPrice
+                )}
+              </p>
             </div>
           </div>
+
+          {/* Payment Options */}
           <div className='w-full flex flex-col gap-4'>
             <button
               className='py-2 px-4 border-2 border-green-600 font-semibold text-green-600 hover:bg-red-600 hover:text-white'
@@ -222,6 +275,7 @@ const CheckoutPage = () => {
             </button>
           </div>
         </div>
+
       </div>
       {openAddress && <AddAddress close={() => setOpenAddress(false)} />}
     </section>

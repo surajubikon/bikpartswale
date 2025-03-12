@@ -21,6 +21,9 @@ export default {
         "secondary-200": "#00b050",
         "secondary-100": "#0b1a78",
       },
+      animation: {
+        marquee: 'marquee 1s linear infinite',
+      },
       keyframes: {
         marquee: {
           '0%': { transform: 'translateX(100%)' },

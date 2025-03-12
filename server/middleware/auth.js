@@ -1,47 +1,48 @@
-import jwt from 'jsonwebtoken'
+import jwt from "jsonwebtoken";
 
-const auth = async(request,response,next)=>{
+const auth = async (request, response, next) => {
     try {
-        const token = request.cookies.accessToken || request?.headers?.authorization?.split(" ")[1]
-       
-       
+        const token = request.cookies.accessToken || request?.headers?.authorization?.split(" ")[1];
 
-        if(!token){
+        if (!token) {
             return response.status(401).json({
-                message : "Provide token"
-            })
-        }
-
-        const decode = await jwt.verify(token,process.env.SECRET_KEY_ACCESS_TOKEN)
-
-        if(!decode){
-            return response.status(401).json({
-                message : "unauthorized access",
-                error : true,
-                success : false
-            })
-        }
-        if (decode.exp < Date.now() / 1000) {
-            return res.status(401).json({
-              message: "Token expired",
-              error: true,
-              success: false
+                message: "Please login first",
+                error: true,
+                success: false
             });
-          }
-          
-        
+        }
+
+        const decode = await jwt.verify(token, process.env.SECRET_KEY_ACCESS_TOKEN);
+
+        if (!decode) {
+            return response.status(401).json({
+                message: "Unauthorized access",
+                error: true,
+                success: false
+            });
+        }
+
+        if (decode.exp < Date.now() / 1000) {
+            return response.status(401).json({
+                message: "Token expired, please login again",
+                error: true,
+                success: false
+            });
+        }
+
         // Attach userId to the request for further processing
         request.userId = decode.id;
         request.user = { _id: decode.id };
-       next();
+
+        next();
     } catch (error) {
         console.error(error.message);  // Log the error for debugging
         return response.status(500).json({
-            message: "You have not logged in",
+            message: "Please login first",
             error: true,
             success: false
         });
     }
 };
 
-export default auth
+export default auth;
