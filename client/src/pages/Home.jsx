@@ -456,9 +456,7 @@ const Home = () => {
             <div className="text-center">
               <span className="text-5xl sm:text-7xl font-extrabold">75%</span>
               <p className="text-2xl sm:text-3xl mt-1">Off</p>
-              <Link to="" className="mt-4 inline-block bg-white text-red-600 font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-100 transition">
-                View Details
-              </Link>
+              
             </div>
           </div>
         </div>
@@ -469,9 +467,7 @@ const Home = () => {
             <h2 className="font-semibold text-xs sm:text-sm">Mega Motorcycle Parts Offer</h2>
             <h3 className="text-2xl sm:text-4xl font-bold my-3 sm:my-5">Discover New Arrivals</h3>
             <p className="text-xs sm:text-sm mb-4">1000+ Spare parts!</p>
-            <Link to="" className="inline-block bg-white text-blue-600 font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-100 transition">
-              Shop Now
-            </Link>
+            
           </div>
         </div>
       </div>

@@ -42,6 +42,7 @@ const router = createBrowserRouter([
         element : 
         (
             <>
+            
                 <FixScrollIssue/> {/* ✅ Ye scroll issue fix karega */}
                 <App />
             </>
